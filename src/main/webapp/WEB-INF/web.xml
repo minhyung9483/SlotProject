@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd" id="WebApp_ID" version="4.0">
+  <servlet>
+    <servlet-name>dispatcherServlet</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <init-param>
+      <param-name>contextConfigLocation</param-name>
+      <param-value>/WEB-INF/static/servlet-context.xml</param-value>
+    </init-param>
+    <multipart-config>
+      <location>/var/lib/tomcat9/files</location>
+      <max-file-size>20971520</max-file-size> <!-- 최대크기 20M -->
+      <max-request-size>41943040</max-request-size> <!-- 한번에 올릴 최대 크기 40M -->
+      <file-size-threshold>20971520</file-size-threshold> <!-- 메모리 -->
+    </multipart-config>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>dispatcherServlet</servlet-name>
+    <url-pattern>/</url-pattern>
+  </servlet-mapping>
+  
+  <filter>
+  <filter-name>MultipartFilter</filter-name>
+  <filter-class>org.springframework.web.multipart.support.MultipartFilter</filter-class>
+</filter>
+<filter-mapping>
+  <filter-name>MultipartFilter</filter-name>
+  <url-pattern>/*</url-pattern>
+</filter-mapping>
+
+</web-app>
