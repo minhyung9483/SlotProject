@@ -25,7 +25,7 @@ public class PageMoveController {
 
 		if(member!=null) {
 			/*if("M".equals(member.getUSER_PERM()) || "G".equals(member.getUSER_PERM())){
-				return "redirect:/users";
+				return "redirect:/naver-shopping-users";
 			}else{
 				return "redirect:/slots";
 			}*/
@@ -51,18 +51,32 @@ public class PageMoveController {
 		member = (Member) ContextUtil.getAttrFromSession(Protocol.Json.KEY_MEMBER);
 
 		if(member!=null) {
-			model.addAttribute("MENU","슬롯관리");
-			return "Front/v1/slots";
+			if(member.getUSER_TYPE().contains("NS")){
+				return "redirect:/naver-shopping-slots";
+			}else if(member.getUSER_TYPE().contains("NP")){
+				return "redirect:/naver-place-slots";
+			}
+		}
+		return "redirect:/login";
+	}
+
+	@RequestMapping("/naver-shopping-slots")
+	public String NaverShoppingSlots(HttpServletRequest request, Model model) {
+		member = (Member) ContextUtil.getAttrFromSession(Protocol.Json.KEY_MEMBER);
+
+		if(member!=null&&member.getUSER_TYPE().contains("NS")) {
+			model.addAttribute("MENU","네이버쇼핑슬롯관리");
+			return "Front/v1/naver-shopping-slots";
 		}
 
 		return "redirect:/login";
 	}
 
-	@RequestMapping("/slots/{Page}")
-	public String SlotsPage(@PathVariable("Page") String Page, HttpServletRequest Request, Model model) {
+	@RequestMapping("/naver-shopping-slots/{Page}")
+	public String NaverShoppingSlotsPage(@PathVariable("Page") String Page, HttpServletRequest Request, Model model) {
 		member = (Member)ContextUtil.getAttrFromSession(Protocol.Json.KEY_MEMBER);
 
-		if(member!=null) {
+		if(member!=null&&member.getUSER_TYPE().contains("NS")) {
 			try {
 				String SearchType = Request.getParameter("st");
 				String SearchValue = Request.getParameter("sv");
@@ -72,8 +86,40 @@ public class PageMoveController {
 				model.addAttribute("page", Page);
 			}catch(Exception e){ e.printStackTrace(); }
 
-			model.addAttribute("MENU","슬롯관리");
-			return "Front/v1/slots";
+			model.addAttribute("MENU","네이버쇼핑슬롯관리");
+			return "Front/v1/naver-shopping-slots";
+		}
+		return "redirect:/login";
+	}
+
+	@RequestMapping("/naver-place-slots")
+	public String NaverPlaceSlots(HttpServletRequest request, Model model) {
+		member = (Member) ContextUtil.getAttrFromSession(Protocol.Json.KEY_MEMBER);
+
+		if(member!=null&&member.getUSER_TYPE().contains("NP")) {
+			model.addAttribute("MENU","네이버플레이스슬롯관리");
+			return "Front/v1/naver-place-slots";
+		}
+
+		return "redirect:/login";
+	}
+
+	@RequestMapping("/naver-place-slots/{Page}")
+	public String NavePlaceSlotsPage(@PathVariable("Page") String Page, HttpServletRequest Request, Model model) {
+		member = (Member)ContextUtil.getAttrFromSession(Protocol.Json.KEY_MEMBER);
+
+		if(member!=null&&member.getUSER_TYPE().contains("NP")) {
+			try {
+				String SearchType = Request.getParameter("st");
+				String SearchValue = Request.getParameter("sv");
+
+				model.addAttribute("SearchType",SearchType!=null ? SearchType : "");
+				model.addAttribute("SearchValue",SearchValue!=null ? SearchValue : "");
+				model.addAttribute("page", Page);
+			}catch(Exception e){ e.printStackTrace(); }
+
+			model.addAttribute("MENU","네이버플레이스슬롯관리");
+			return "Front/v1/naver-place-slots";
 		}
 		return "redirect:/login";
 	}
@@ -83,22 +129,36 @@ public class PageMoveController {
 		member = (Member) ContextUtil.getAttrFromSession(Protocol.Json.KEY_MEMBER);
 
 		if(member!=null) {
-			if("M".equals(member.getUSER_PERM()) || "G".equals(member.getUSER_PERM())){
-				model.addAttribute("MENU","유저관리");
-				return "Front/v1/users";
-			}else{
-				model.addAttribute(Protocol.ALERT, "Permission denied.");
-				return "redirect:/slots";
+			if(member.getUSER_TYPE().contains("NS")){
+				return "redirect:/naver-shopping-users";
+			}else if(member.getUSER_TYPE().contains("NP")){
+				return "redirect:/naver-place-users";
 			}
 		}
 		return "redirect:/login";
 	}
 
-	@RequestMapping("/users/{Page}")
-	public String UsersPage(@PathVariable("Page") String Page, HttpServletRequest Request, Model model) {
+	@RequestMapping("/naver-shopping-users")
+	public String NaverShoppingUsers(HttpServletRequest request, Model model) {
+		member = (Member) ContextUtil.getAttrFromSession(Protocol.Json.KEY_MEMBER);
+
+		if(member!=null&&member.getUSER_TYPE().contains("NS")) {
+			if("M".equals(member.getUSER_PERM()) || "G".equals(member.getUSER_PERM())){
+				model.addAttribute("MENU","네이버쇼핑유저관리");
+				return "Front/v1/naver-shopping-users";
+			}else{
+				model.addAttribute(Protocol.ALERT, "Permission denied.");
+				return "redirect:/naver-shopping-slots";
+			}
+		}
+		return "redirect:/login";
+	}
+
+	@RequestMapping("/naver-shopping-users/{Page}")
+	public String NaverShoppingUsersPage(@PathVariable("Page") String Page, HttpServletRequest Request, Model model) {
 		member = (Member)ContextUtil.getAttrFromSession(Protocol.Json.KEY_MEMBER);
 
-		if(member!=null) {
+		if(member!=null&&member.getUSER_TYPE().contains("NS")) {
 			if("M".equals(member.getUSER_PERM()) || "G".equals(member.getUSER_PERM())){
 				try {
 					String SearchType = Request.getParameter("st");
@@ -109,36 +169,77 @@ public class PageMoveController {
 					model.addAttribute("page", Page);
 				}catch(Exception e){ e.printStackTrace(); }
 
-				model.addAttribute("MENU","유저관리");
-				return "Front/v1/users";
+				model.addAttribute("MENU","네이버쇼핑유저관리");
+				return "Front/v1/naver-shopping-users";
 			}else{
 				model.addAttribute(Protocol.ALERT, "Permission denied.");
-				return "redirect:/slots";
+				return "redirect:/naver-shopping-slots";
 			}
 		}
 		return "redirect:/login";
 	}
 
-	@RequestMapping("/log-slots")
-	public String LogSlots(HttpServletRequest request, Model model) {
+	@RequestMapping("/naver-place-users")
+	public String NaverPlaceUsers(HttpServletRequest request, Model model) {
 		member = (Member) ContextUtil.getAttrFromSession(Protocol.Json.KEY_MEMBER);
 
-		if(member!=null) {
+		if(member!=null&&member.getUSER_TYPE().contains("NP")) {
 			if("M".equals(member.getUSER_PERM()) || "G".equals(member.getUSER_PERM())){
-				model.addAttribute("MENU","슬롯로그");
-				return "Front/v1/log-slots";
+				model.addAttribute("MENU","네이버플레이스유저관리");
+				return "Front/v1/naver-place-users";
 			}else{
 				model.addAttribute(Protocol.ALERT, "Permission denied.");
-				return "redirect:/slots";
+				return "redirect:/naver-place-slots";
 			}
 		}
 		return "redirect:/login";
 	}
 
-	@RequestMapping("/log-slots/{Page}")
-	public String LogSlotsPage(@PathVariable("Page") String Page, HttpServletRequest Request, Model model) {
+	@RequestMapping("/naver-place-users/{Page}")
+	public String NaverPlaceUsersPage(@PathVariable("Page") String Page, HttpServletRequest Request, Model model) {
 		member = (Member)ContextUtil.getAttrFromSession(Protocol.Json.KEY_MEMBER);
-		if(member!=null) {
+
+		if(member!=null&&member.getUSER_TYPE().contains("NP")) {
+			if("M".equals(member.getUSER_PERM()) || "G".equals(member.getUSER_PERM())){
+				try {
+					String SearchType = Request.getParameter("st");
+					String SearchValue = Request.getParameter("sv");
+
+					model.addAttribute("SearchType",SearchType!=null ? SearchType : "");
+					model.addAttribute("SearchValue",SearchValue!=null ? SearchValue : "");
+					model.addAttribute("page", Page);
+				}catch(Exception e){ e.printStackTrace(); }
+
+				model.addAttribute("MENU","네이버플레이스유저관리");
+				return "Front/v1/naver-place-users";
+			}else{
+				model.addAttribute(Protocol.ALERT, "Permission denied.");
+				return "redirect:/naver-place-slots";
+			}
+		}
+		return "redirect:/login";
+	}
+
+	@RequestMapping("/naver-shopping-log-slots")
+	public String NaverShoppingLogSlots(HttpServletRequest request, Model model) {
+		member = (Member) ContextUtil.getAttrFromSession(Protocol.Json.KEY_MEMBER);
+
+		if(member!=null&&member.getUSER_TYPE().contains("NS")) {
+			if("M".equals(member.getUSER_PERM()) || "G".equals(member.getUSER_PERM())){
+				model.addAttribute("MENU","네이버쇼핑슬롯로그");
+				return "Front/v1/naver-shopping-log-slots";
+			}else{
+				model.addAttribute(Protocol.ALERT, "Permission denied.");
+				return "redirect:/naver-shopping-slots";
+			}
+		}
+		return "redirect:/login";
+	}
+
+	@RequestMapping("/naver-shopping-log-slots/{Page}")
+	public String NaverShoppingLogSlotsPage(@PathVariable("Page") String Page, HttpServletRequest Request, Model model) {
+		member = (Member)ContextUtil.getAttrFromSession(Protocol.Json.KEY_MEMBER);
+		if(member!=null&&member.getUSER_TYPE().contains("NS")) {
 			if("M".equals(member.getUSER_PERM()) || "G".equals(member.getUSER_PERM())){
 				try {
 					String SearchType = Request.getParameter("st");
@@ -153,11 +254,55 @@ public class PageMoveController {
 					model.addAttribute("page", Page);
 				}catch(Exception e){ e.printStackTrace(); }
 
-				model.addAttribute("MENU","슬롯로그");
-				return "Front/v1/log-slots";
+				model.addAttribute("MENU","네이버쇼핑슬롯로그");
+				return "Front/v1/naver-shopping-log-slots";
 			}else{
 				model.addAttribute(Protocol.ALERT, "Permission denied.");
-				return "redirect:/slots";
+				return "redirect:/naver-shopping-slots";
+			}
+		}
+		return "redirect:/login";
+	}
+
+	@RequestMapping("/naver-place-log-slots")
+	public String NaverPlaceLogSlots(HttpServletRequest request, Model model) {
+		member = (Member) ContextUtil.getAttrFromSession(Protocol.Json.KEY_MEMBER);
+
+		if(member!=null&&member.getUSER_TYPE().contains("NP")) {
+			if("M".equals(member.getUSER_PERM()) || "G".equals(member.getUSER_PERM())){
+				model.addAttribute("MENU","네이버플레이스슬롯로그");
+				return "Front/v1/naver-place-log-slots";
+			}else{
+				model.addAttribute(Protocol.ALERT, "Permission denied.");
+				return "redirect:/naver-place-slots";
+			}
+		}
+		return "redirect:/login";
+	}
+
+	@RequestMapping("/naver-place-log-slots/{Page}")
+	public String NaverPlaceLogSlotsPage(@PathVariable("Page") String Page, HttpServletRequest Request, Model model) {
+		member = (Member)ContextUtil.getAttrFromSession(Protocol.Json.KEY_MEMBER);
+		if(member!=null&&member.getUSER_TYPE().contains("NP")) {
+			if("M".equals(member.getUSER_PERM()) || "G".equals(member.getUSER_PERM())){
+				try {
+					String SearchType = Request.getParameter("st");
+					String SearchValue = Request.getParameter("sv");
+					String StartDate = Request.getParameter("sd");
+					String EndDate = Request.getParameter("ed");
+
+					model.addAttribute("SearchType",SearchType!=null ? SearchType : "");
+					model.addAttribute("SearchValue",SearchValue!=null ? SearchValue : "");
+					model.addAttribute("StartDate",StartDate!=null ? StartDate : "");
+					model.addAttribute("EndDate",EndDate!=null ? EndDate : "");
+					model.addAttribute("page", Page);
+				}catch(Exception e){ e.printStackTrace(); }
+
+				model.addAttribute("MENU","네이버플레이스슬롯로그");
+				return "Front/v1/naver-place-log-slots";
+			}else{
+				model.addAttribute(Protocol.ALERT, "Permission denied.");
+				return "redirect:/naver-place-slots";
 			}
 		}
 		return "redirect:/login";

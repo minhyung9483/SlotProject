@@ -68,34 +68,45 @@ public class MemberController {
 			}
 
 			String USER_ID = Request.getParameter("USER_ID_IN");
+			String USER_TYPE = Request.getParameter("USER_TYPE_IN");
+			String RETURN_URL = "";
+			String MENU = "";
+
+			if(USER_TYPE.contains("NS")){
+				RETURN_URL = "shopping";
+				MENU = "네이버쇼핑유저관리";
+			}else if(USER_TYPE.contains("NP")){
+				RETURN_URL = "place";
+				MENU = "네이버플레이스유저관리";
+			}
 
 			if(DBConnector.CheckMemberById(USER_ID)){
 				model.addAttribute(Protocol.ALERT, "아이디가 이미 존재합니다.");
-				model.addAttribute("MENU","유저관리");
-				return "Front/v1/users";
+				model.addAttribute("MENU",MENU);
+				return "Front/v1/naver-"+RETURN_URL+"-users";
 			}else{
 				if("M".equals(member.getUSER_PERM())){
 					String USER_PWD = Request.getParameter("USER_PWD_IN");
 					String USER_PERM = Request.getParameter("USER_PERM_IN");
 					String USER_MEMO = Request.getParameter("USER_MEMO_IN");
 
-					int USER_IDX = DBConnector.InsertMemberInfo(USER_ID, USER_PWD, USER_PERM!=null ? USER_PERM : "S", USER_MEMO, member.getUSER_IDX());
+					int USER_IDX = DBConnector.InsertMemberInfo(USER_ID, USER_PWD, USER_PERM!=null ? USER_PERM : "S", USER_TYPE, USER_MEMO, member.getUSER_IDX());
 					if(USER_IDX > 0)DBConnector.InsertMemberLogInfo(USER_IDX, "C", member.getUSER_IP(), member.getUSER_IDX());
 
-					model.addAttribute("MENU","유저관리");
-					return "redirect:/users";
+					model.addAttribute("MENU",MENU);
+					return "redirect:/naver-"+RETURN_URL+"-users";
 				}else if("G".equals(member.getUSER_PERM())){
 					String USER_PWD = Request.getParameter("USER_PWD_IN");
 					String USER_MEMO = Request.getParameter("USER_MEMO_IN");
 
-					int USER_IDX = DBConnector.InsertMemberInfo(USER_ID, USER_PWD, null, USER_MEMO, member.getUSER_IDX());
+					int USER_IDX = DBConnector.InsertMemberInfo(USER_ID, USER_PWD, null, USER_TYPE, USER_MEMO, member.getUSER_IDX());
 					if(USER_IDX > 0)DBConnector.InsertMemberLogInfo(USER_IDX, "C", member.getUSER_IP(), member.getUSER_IDX());
 
-					model.addAttribute("MENU","유저관리");
-					return "redirect:/users";
+					model.addAttribute("MENU",MENU);
+					return "redirect:/naver-"+RETURN_URL+"-users";
 				}else{
 					model.addAttribute(Protocol.ALERT, "Permission denied.");
-					return "redirect:/slots";
+					return "redirect:/naver-"+RETURN_URL+"-slots";
 				}
 			}
 
@@ -109,12 +120,24 @@ public class MemberController {
 	public String SetUserIdx(@PathVariable("UserIdx") int UserIdx, HttpServletRequest Request, Model model) throws Exception{
 		member = (Member)ContextUtil.getAttrFromSession(Protocol.Json.KEY_MEMBER);
 		if(member!=null) {
-			/* 업무시간 외 셧다운 주석처리 */
-			if(!"M".equals(member.getUSER_PERM()) && !Util.checkWorkingTime()){
-				return "redirect:/users";
+			String USER_TYPE = Request.getParameter("USER_TYPE_UP");
+			String RETURN_URL = "";
+			String MENU = "";
+
+			if(USER_TYPE.contains("NS")){
+				RETURN_URL = "shopping";
+				MENU = "네이버쇼핑유저관리";
+			}else if(USER_TYPE.contains("NP")){
+				RETURN_URL = "place";
+				MENU = "네이버플레이스유저관리";
 			}
 
-			Member m = DBConnector.getMemberList(UserIdx , 0, null, null, member.getUSER_PERM(), member.getUSER_IDX()).get(0);
+			/* 업무시간 외 셧다운 주석처리 */
+			if(!"M".equals(member.getUSER_PERM()) && !Util.checkWorkingTime()){
+				return "redirect:/naver-"+RETURN_URL+"-users";
+			}
+
+			Member m = DBConnector.getMemberList(UserIdx , 0, null, null, member.getUSER_PERM(), null, member.getUSER_IDX()).get(0);
 			if(m != null){
 				if("M".equals(member.getUSER_PERM())){
 					String USER_PWD = Request.getParameter("USER_PWD_UP");
@@ -131,12 +154,12 @@ public class MemberController {
 						URL = URL + PARAM;
 					}
 
-					if(DBConnector.UpdateMemberInfo(UserIdx, USER_PWD, USER_PERM!=null ? USER_PERM : "S", USER_MEMO)){
+					if(DBConnector.UpdateMemberInfo(UserIdx, USER_PWD, USER_PERM!=null ? USER_PERM : "S", USER_TYPE, USER_MEMO)){
 						DBConnector.InsertMemberLogInfo(UserIdx, "U", member.getUSER_IP(), member.getUSER_IDX());
 					}
 
-					model.addAttribute("MENU","유저관리");
-					return "redirect:/users"+URL;
+					model.addAttribute("MENU",MENU);
+					return "redirect:/naver-"+RETURN_URL+"-users"+Util.encodeKorean(URL);
 				}else if("G".equals(member.getUSER_PERM()) && (m.getINST_ADMN_IDX() == member.getUSER_IDX() || m.getUSER_IDX() == member.getUSER_IDX())){
 					String USER_PWD = Request.getParameter("USER_PWD_UP");
 					String USER_MEMO = Request.getParameter("USER_MEMO_UP");
@@ -151,16 +174,16 @@ public class MemberController {
 						URL = URL + PARAM;
 					}
 
-					if(DBConnector.UpdateMemberInfo(UserIdx, USER_PWD, null, USER_MEMO)){
+					if(DBConnector.UpdateMemberInfo(UserIdx, USER_PWD, null, USER_TYPE, USER_MEMO)){
 						DBConnector.InsertMemberLogInfo(UserIdx, "U", member.getUSER_IP(), member.getUSER_IDX());
 					}
 
-					model.addAttribute("MENU","유저관리");
-					return "redirect:/users"+URL;
+					model.addAttribute("MENU",MENU);
+					return "redirect:/naver-"+RETURN_URL+"-users"+Util.encodeKorean(URL);
 				}
 			}else{
 				model.addAttribute(Protocol.ALERT, "Permission denied.");
-				return "redirect:/slots";
+				return "redirect:/naver-"+RETURN_URL+"-slots";
 			}
 		}
 		return "redirect:/login";

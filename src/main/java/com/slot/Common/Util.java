@@ -10,14 +10,21 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
@@ -343,5 +350,52 @@ public class Util {
 		Logger.Info(TAG, "==========================");
 
 		return result;
+	}
+
+	public static String encodeKorean(String url){
+		// StringBuilder를 사용하여 결과를 만듭니다.
+		StringBuilder result = new StringBuilder();
+		try {
+			// 정규식을 사용하여 한글 부분을 찾습니다.
+			Pattern pattern = Pattern.compile("[가-힣]+");
+			Matcher matcher = pattern.matcher(url);
+
+
+			int lastEnd = 0;
+
+			while (matcher.find()) {
+				// 한글 부분 전까지의 문자열을 추가합니다.
+				result.append(url, lastEnd, matcher.start());
+				// 한글 부분을 인코딩하여 추가합니다.
+				result.append(URLEncoder.encode(matcher.group(), StandardCharsets.UTF_8.toString()));
+				lastEnd = matcher.end();
+			}
+
+			// 마지막 한글 이후의 문자열을 추가합니다.
+			result.append(url.substring(lastEnd));
+
+			// 결과 출력
+//			System.out.println("Original URL: " + url);
+//			System.out.println("Encoded URL: " + result.toString());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return result.toString();
+	}
+
+	public static int getDaysBetween(String start, String end) {
+		if(start==null || "".equals(start) || end==null || "".equals(end))return 0;
+		// 문자열을 LocalDate로 변환
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		LocalDate startDate = LocalDate.parse(start, formatter);
+		LocalDate endDate = LocalDate.parse(end, formatter);
+
+		// 두 날짜 사이의 일수 계산
+		long daysBetween = ChronoUnit.DAYS.between(startDate, endDate)+1;
+
+		// 정수로 반환
+		return (int) daysBetween;
 	}
 }

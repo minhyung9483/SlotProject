@@ -12,6 +12,8 @@
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="java.util.Calendar" %>
 <%@ page import="java.util.Date" %>
+<%@ page import="com.slot.Model.NaverShoppingSlot" %>
+<%@ page import="com.slot.Model.NaverShoppingSlotType" %>
 <!doctype html>
 <html lang="ko">
 
@@ -31,7 +33,8 @@
 	}catch(Exception e){ e.printStackTrace(); }
 	////////////////////////
 
-	final String TAG = "SLOTS_PAGE";
+	final String TAG = "NAVER_SHOPPING_SLOTS_PAGE";
+	final String USER_TYPE = "NS_";
 	request.setCharacterEncoding("utf-8");
 	Member member = (Member) session.getAttribute(Protocol.Json.KEY_MEMBER);
 
@@ -48,9 +51,9 @@
 	try{ setPage = Integer.parseInt( (String)request.getAttribute("page")); 	}catch(Exception e){ }
 
 
-	int totalCount  = DBConnector.getSlotListTotalCount(m_SearchType, m_SearchValue, member.getUSER_PERM(), member.getUSER_IDX());
-	List<Slot> slotList = DBConnector.getSlotList(0, setPage - 1, m_SearchType, m_SearchValue, member.getUSER_PERM(), member.getUSER_IDX());
-
+	int totalCount  = DBConnector.getNaverShoppingSlotListTotalCount(m_SearchType, m_SearchValue, member.getUSER_PERM(), member.getUSER_IDX());
+	List<NaverShoppingSlot> slotList = DBConnector.getNaverShoppingSlotList(0, setPage - 1, m_SearchType, m_SearchValue, member.getUSER_PERM(), member.getUSER_IDX());
+	List<NaverShoppingSlotType> naverShoppingSlotTypeList = DBConnector.getNaverShoppingSlotType("Y");
 	int idx = totalCount;
 %>
 <%
@@ -74,7 +77,7 @@
 		formData.append("st", document.getElementById("searchType").value);
 		formData.append("sv", document.getElementById("searchValue").value);
 		$.ajax({
-			url: '/searchSlot/1',
+			url: '/naverShoppingSearchSlot/1',
 			type: "POST",
 			data: formData,
 			datatype: "json",
@@ -128,7 +131,7 @@
 								<button type="button" class="btn btn-primary ms-2 d-flex align-items-center" _msttexthash="9814740" _msthash="28" onclick="javascript:changeQuery()">
 									<i class="ti ti-search fs-4 me-2"></i>검색
 								</button>
-								<a href="/slots" type="button" class="btn btn-outline-primary ms-2" _msttexthash="9814740" _msthash="28"><i class="ti ti-reload fs-6"></i></a>
+								<a href="/naver-shopping-slots" type="button" class="btn btn-outline-primary ms-2" _msttexthash="9814740" _msthash="28"><i class="ti ti-reload fs-6"></i></a>
 							</div>
 						</div>
 					</div>
@@ -141,26 +144,31 @@
 					<div class="card-body p-4">
 						<div class="row">
 							<div class="col-lg-4">
-								<h5 class="card-title fw-semibold mb-4 col-lg-3">슬롯 관리<%=totalCount>0?"("+totalCount+")":""%></h5>
+								<h5 class="card-title fw-semibold mb-4 col-lg-12">네이버 쇼핑<%=totalCount>0?"("+totalCount+")":""%></h5>
 							</div>
 							<div class="col-lg-8 text-end">
+								<%if("M".equals(member.getUSER_PERM())){%>
+								<button type="button" class="btn btn-outline-primary ms-2 mb-1" id="uploadBtn">
+									대량등록
+								</button>
+								<%}%>
 								<%if(slotList.size()>0){%>
-								<%--<button type="button" class="btn btn-primary mb-1" id="updatesBtn" &lt;%&ndash;data-bs-toggle="modal" data-bs-target="#updatesModal"&ndash;%&gt;>
+								<%--<button type="button" class="btn btn-outline-primary mb-1" id="updatesBtn" &lt;%&ndash;data-bs-toggle="modal" data-bs-target="#updatesModal"&ndash;%&gt;>
 									수정
 								</button>--%>
 								<%if("M".equals(member.getUSER_PERM())){%>
-								<button type="button" class="btn btn-primary ms-2 mb-1" onclick="setStatus()">
-									확인
+								<button type="button" class="btn btn-outline-primary ms-2 mb-1" onclick="setStatus()">
+									선택확인
 								</button>
 								<%}%>
 								<%if("M".equals(member.getUSER_PERM()) || "G".equals(member.getUSER_PERM())){%>
-								<button type="button" class="btn btn-primary ms-2 mb-1" id="extendsBtn" <%--data-bs-toggle="modal" data-bs-target="#extendsModal"--%>>
-									연장
+								<button type="button" class="btn btn-outline-primary ms-2 mb-1" id="extendsBtn" <%--data-bs-toggle="modal" data-bs-target="#extendsModal"--%>>
+									선택연장
 								</button>
 								<%}%>
 								<%if("M".equals(member.getUSER_PERM())){%>
-								<button type="button" class="btn btn-primary ms-2 mb-1" onclick="setDelete()">
-									삭제
+								<button type="button" class="btn btn-outline-primary ms-2 mb-1" onclick="setDelete()">
+									선택삭제
 								</button>
 								<%}%>
 								<%}%>
@@ -179,34 +187,40 @@
 									<col width="2.5%">
 									<col width="2.5%">
 									<col width="2.5%">
-									<col width="12.5%">
-									<col width="12.5%">
-									<col width="12.5%">
-									<col width="12.5%">
-									<col width="12.5%">
-									<col width="12.5%">
-									<col width="12.5%">
+									<col width="11%">
+									<col width="11%">
+
+									<col width="11%">
+									<col width="11%">
+									<col width="11%">
+									<col width="11%">
+									<col width="11%">
+									<col width="11%">
 									<col width="5%">
 									<%}else if("G".equals(member.getUSER_PERM())){%>
 									<col width="2.5%">
 									<col width="5%">
-									<col width="12.5%">
-									<col width="12.5%">
-									<col width="12.5%">
-									<col width="12.5%">
-									<col width="12.5%">
-									<col width="12.5%">
-									<col width="12.5%">
+									<col width="11%">
+									<col width="11%">
+
+									<col width="11%">
+									<col width="11%">
+									<col width="11%">
+									<col width="11%">
+									<col width="11%">
+									<col width="11%">
 									<col width="5%">
 									<%}else{%>
 									<col width="7.5%">
-									<col width="12.5%">
-									<col width="12.5%">
-									<col width="12.5%">
-									<col width="12.5%">
-									<col width="12.5%">
-									<col width="12.5%">
-									<col width="12.5%">
+									<col width="11%">
+									<col width="11%">
+
+									<col width="11%">
+									<col width="11%">
+									<col width="11%">
+									<col width="11%">
+									<col width="11%">
+									<col width="11%">
 									<col width="5%">
 									<%}%>
 								</colgroup>
@@ -224,10 +238,10 @@
 										String[] Title;
 
 										if("M".equals(member.getUSER_PERM())){
-											Title = new String[]{"번호", "상태", "아이디", "키워드", "상품링크", "묶음MID", "단품MID", "시작일", "종료일", "관리"};
+											Title = new String[]{"번호", "상태", "아이디", "슬롯타입", "키워드", "URL", "묶음MID", "단품MID", "시작일", "종료일", "관리"};
 
 										}else{
-											Title = new String[]{"번호", "아이디", "키워드", "상품링크", "묶음MID", "단품MID", "시작일", "종료일", "관리"};
+											Title = new String[]{"번호", "아이디", "슬롯타입", "키워드", "URL", "묶음MID", "단품MID", "시작일", "종료일", "관리"};
 
 										}
 
@@ -283,6 +297,18 @@
 									<%}%>
 									<td class=""><%--아이디--%>
 										<input type="text" class="form-control-plaintext text-center" id="ID_<%=slotList.get(i).getSLOT_IDX()%>" name="ID_<%=slotList.get(i).getSLOT_IDX()%>" value="<%=slotList.get(i).getUSER_ID()%>" title="<%=slotList.get(i).getUSER_ID()%>" readonly>
+									</td>
+									<td class=""><%--슬롯타입--%>
+										<%if("M".equals(member.getUSER_PERM())){%>
+										<select class="form-select" id="TYPE_<%=slotList.get(i).getSLOT_IDX()%>" name="TYPE_<%=slotList.get(i).getSLOT_IDX()%>">
+											<option value="0">미선택</option>
+											<%for(int j=0; j< naverShoppingSlotTypeList.size(); j++){%>
+											<option value="<%=naverShoppingSlotTypeList.get(j).getNS_SLOT_TYPE_IDX()%>" <%=slotList.get(i).getNS_SLOT_TYPE_IDX()==naverShoppingSlotTypeList.get(j).getNS_SLOT_TYPE_IDX()?"selected":""%>><%=naverShoppingSlotTypeList.get(j).getTYPE_NAME()%></option>
+											<%}%>
+										</select>
+										<%}else{%>
+										<input type="text" class="form-control-plaintext text-center" id="TYPE_<%=slotList.get(i).getSLOT_IDX()%>" name="TYPE_<%=slotList.get(i).getSLOT_IDX()%>" value="<%=slotList.get(i).getTYPE_NAME()==null?"":slotList.get(i).getTYPE_NAME()%>" title="<%=slotList.get(i).getTYPE_NAME()==null?"":slotList.get(i).getTYPE_NAME()%>" readonly>
+										<%}%>
 									</td>
 									<td class=""><%--키워드--%>
 										<input type="text" class="form-control text-center" id="KYWD_<%=slotList.get(i).getSLOT_IDX()%>" name="KYWD_<%=slotList.get(i).getSLOT_IDX()%>" value="<%=!"".equals(slotList.get(i).getPROD_KYWD()) ? slotList.get(i).getPROD_KYWD() : ""%>" title="<%=!"".equals(slotList.get(i).getPROD_KYWD()) ? slotList.get(i).getPROD_KYWD() : ""%>">
@@ -348,7 +374,7 @@
 				<ul class="pagination">
 					<li class="page-item">
 						<% 	if(setPage > 1){ %>
-						<a class="page-link d-flex border-0" href="/slots/<%=setPage - 1%><%=Param%>">
+						<a class="page-link d-flex border-0" href="/naver-shopping-slots/<%=setPage - 1%><%=Param%>">
 							<i class="ti ti-arrow-left fs-6 me-2"></i>Prev
 						</a>
 						<% } %>
@@ -358,20 +384,20 @@
 				<ul class="pagination d-none d-sm-block d-sm-flex">
 					<%
 						if(prev){
-							out.print("<li class=\"page-item \"><a class=\"page-link\" href=\"/slots/"+(startPage - 10)+Param+"\"> << </a></li>");
+							out.print("<li class=\"page-item \"><a class=\"page-link\" href=\"/naver-shopping-slots/"+(startPage - 10)+Param+"\"> << </a></li>");
 						}
 						for(int i=startPage; i<=endPage; i++){
-							out.print("<li class=\"page-item "+ (i==setPage ? "active" : "") +" \"><a class=\"page-link\" href=\"/slots/"+(i)+Param+"\">"+(i)+"</a></li>");
+							out.print("<li class=\"page-item "+ (i==setPage ? "active" : "") +" \"><a class=\"page-link\" href=\"/naver-shopping-slots/"+(i)+Param+"\">"+(i)+"</a></li>");
 						}
 						if(next){
-							out.print("<li class=\"page-item \"><a class=\"page-link\" href=\"/slots/"+(startPage + 10)+Param+"\"> >> </a></li>");
+							out.print("<li class=\"page-item \"><a class=\"page-link\" href=\"/naver-shopping-slots/"+(startPage + 10)+Param+"\"> >> </a></li>");
 						}
 					%>
 				</ul>
 				<ul class="pagination">
 					<li class="page-item">
 						<% if(setPage < tempEndPage){ %>
-						<a class="page-link d-flex border-0" href="/slots/<%=setPage + 1%><%=Param%>" aria-label="Next">
+						<a class="page-link d-flex border-0" href="/naver-shopping-slots/<%=setPage + 1%><%=Param%>" aria-label="Next">
 							Next<i class="ti ti-arrow-right fs-6 ms-2"></i>
 						</a>
 						<% } %>
@@ -480,11 +506,11 @@
 					<input type="hidden" class="PARAM_EX" id="PARAM_EX" name="PARAM_EX">
 					<div class="mb-3">
 						<label for="SLOT_DAYS_EX" class="col-form-label">연장일수</label>
-<%--						<input type="number" class="form-control SLOT_DAYS_EX" id="SLOT_DAYS_EX" name="SLOT_DAYS_EX" value="7" min="1">--%>
-						<select class="form-select SLOT_DAYS_EX" id="SLOT_DAYS_EX" name="SLOT_DAYS_EX">
+						<input type="number" class="form-control SLOT_DAYS_EX" id="SLOT_DAYS_EX" name="SLOT_DAYS_EX" value="7" min="1">
+						<%--<select class="form-select SLOT_DAYS_EX" id="SLOT_DAYS_EX" name="SLOT_DAYS_EX">
 							<option value="7">7일</option>
 							<option value="10">10일</option>
-						</select>
+						</select>--%>
 					</div>
 				</form>
 			</div>
@@ -496,6 +522,58 @@
 	</div>
 </div>
 <%-- 연장 모달 끝 --%>
+<%-- 대량등록 모달 --%>
+<div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="uploadModalLabel"></h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<form id="uploadForm" name="uploadForm">
+					<div class="mb-3 text-end">
+						<button type="button" class="btn btn-outline-primary ms-2 mb-1" onclick="location.href='/files/Excel/navershopping_sample.xlsx'">
+							네이버 쇼핑 대량등록 양식 <i class="ti ti-download"></i>
+						</button>
+					</div>
+					<div class="mb-3">
+						<label for="uploadFile" class="col-form-label">네이버 쇼핑 엑셀 업로드</label>
+						<input type="file" class="form-control" name="uploadFile" id="uploadFile" onchange="readExcel()" accept=".xlsx, .xls"/>
+					</div>
+					<div class="mb-3">
+						<label for="uploadFile" class="col-form-label fs-2 text-danger">* 엑셀을 작성할 때, 아래 표를 참고하여 슬롯타입 대신 슬롯타입코드를 입력해 주세요.</label>
+						<table class="table text-nowrap mb-0 align-middle">
+							<thead class="text-dark fs-4 text-center bg-light-gray">
+							<tr class="border-top">
+								<th class=" align-middle">
+									<h6 class="fw-semibold mb-0">슬롯타입코드</h6>
+								</th>
+								<th class="border-start align-middle">
+									<h6 class="fw-semibold mb-0">슬롯타입</h6>
+								</th>
+							</tr>
+							</thead>
+							<tbody class="text-center">
+							<%for(int i=0; i<naverShoppingSlotTypeList.size(); i++){%>
+							<tr>
+								<td class=""><%=naverShoppingSlotTypeList.get(i).getNS_SLOT_TYPE_IDX()%></td>
+								<td class="border-start"><%=naverShoppingSlotTypeList.get(i).getTYPE_NAME()%></td>
+							</tr>
+							<%}%>
+							</tbody>
+						</table>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer justify-content-center">
+				<button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">취소</button>
+				<button type="button" class="btn btn-primary" onclick="setUpload()">업로드</button>
+			</div>
+		</div>
+	</div>
+</div>
+<%-- 대량등록 모달 끝 --%>
 
 <jsp:include page="common/script.jsp" />
 <script>
@@ -519,6 +597,10 @@
 				return;
 			}
 			$("#extendsModal").modal('show');
+		});
+
+		$("#uploadBtn").click(function(){
+			$("#uploadModal").modal('show');
 		});
 	});
 
@@ -600,6 +682,8 @@
 			json.SLOT_IDX = USER_IDX_SLOT_IDX[1];
 			json.PAGE = '<%=setPage%>';
 			json.PARAM = '<%=Param%>';
+			json.USER_TYPE = '<%=USER_TYPE%>';
+
 			jsonArray.push(json);
 		});
 
@@ -623,7 +707,7 @@
 				console.log('ajax: ' + json.value);
 				alert(json.alert);
 
-				location.href = "/slots"+json.url;
+				location.href = "/naver-shopping-slots"+json.url;
 			}
 		});
 	}
@@ -659,8 +743,12 @@
 		json.PROD_MID = $("#MID_"+SLOT_IDX_UP).val();
 		json.PROD_KYWD = $("#KYWD_"+SLOT_IDX_UP).val();
 		json.PROD_URL = $("#URL_"+SLOT_IDX_UP).val();
+		<%if("M".equals(member.getUSER_PERM())){%>
+		json.SLOT_TYPE = $("#TYPE_"+SLOT_IDX_UP).val();
+		<%}%>
 		json.PAGE = '<%=setPage%>';
 		json.PARAM = '<%=Param%>';
+		json.USER_TYPE = '<%=USER_TYPE%>';
 
 		// jsonArray.push(json);
 
@@ -683,7 +771,7 @@
 				const json = JSON.parse(response)
 				alert(json.alert);
 
-				location.href = "/slots"+json.url;
+				location.href = "/naver-shopping-slots"+json.url;
 			}
 		});
 	}
@@ -738,7 +826,7 @@
 				console.log('ajax: ' + json.value);
 				alert(json.alert);
 
-				location.href = "/slots"+json.url;
+				location.href = "/naver-shopping-slots"+json.url;
 			}
 		});
 	}*/
@@ -766,6 +854,7 @@
 			json.SLOT_DAYS = $("#SLOT_DAYS_EX").val();
 			json.PAGE = '<%=setPage%>';
 			json.PARAM = '<%=Param%>';
+			json.USER_TYPE = '<%=USER_TYPE%>';
 
 			jsonArray.push(json);
 		});
@@ -790,7 +879,7 @@
 				console.log('ajax: ' + json.value);
 				alert(json.alert);
 
-				location.href = "/slots"+json.url;
+				location.href = "/naver-shopping-slots"+json.url;
 			}
 		});
 	}
@@ -817,6 +906,8 @@
 			json.SLOT_IDX = USER_IDX_SLOT_IDX[1];
 			json.PAGE = '<%=setPage%>';
 			json.PARAM = '<%=Param%>';
+			json.USER_TYPE = '<%=USER_TYPE%>';
+
 			jsonArray.push(json);
 		});
 
@@ -840,11 +931,62 @@
 				console.log('ajax: ' + json.value);
 				alert(json.alert);
 
-				location.href = "/slots"+json.url;
+				location.href = "/naver-shopping-slots"+json.url;
+			}
+		});
+	}
+
+	function readExcel()
+	{
+		let input = event.target;
+		let reader = new FileReader();
+		reader.onload = function () {
+			let data = reader.result;
+			let workBook = XLSX.read(data, {type: 'binary'});
+			workBook.SheetNames.forEach(function (sheetName, index) {
+				let rows = XLSX.utils.sheet_to_json(workBook.Sheets[sheetName]);
+				if(index==0){
+					if(rows!=null && rows.length > 0){
+						this._rows = rows;
+						// console.log(JSON.stringify(rows));
+					}
+				}
+			})
+		};
+		reader.readAsBinaryString(input.files[0]);
+	}
+
+	function setUpload() {
+		let json = new Object();
+
+		json.USER_TYPE = '<%=USER_TYPE%>';
+
+		let formData = new FormData();
+		formData.append("PARAM", JSON.stringify(this._rows));
+		formData.append("USER_TYPE", JSON.stringify(json));
+
+		$.ajax({
+			url: '/uploadSlotExcel',
+			type: "POST",
+			datatype: "json",
+			processData: false,
+			data: formData,
+			contentType : false,
+			enctype: 'application/x-www-form-urlencoded',
+
+			error: function(xhr, status, error) {
+				alert("error:" + error);
+			},
+			success: function(response) {
+				const json = JSON.parse(response);
+				console.log(json.value);
+				alert(json.alert);
+
+				location.href = "/naver-shopping-slots";
 			}
 		});
 	}
 
 </script>
-
+<script defer src="/js/Front/xlsx.full.min.js"></script>
 </html>

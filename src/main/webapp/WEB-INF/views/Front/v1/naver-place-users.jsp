@@ -8,6 +8,7 @@
 <%@ page import="java.time.LocalDateTime" %>
 <%@ page import="java.time.format.DateTimeFormatter" %>
 <%@ page import="java.text.DecimalFormat" %>
+<%@ page import="com.slot.Model.NaverPlaceSlotType" %>
 <!doctype html>
 <html lang="ko">
 
@@ -27,7 +28,8 @@
 	}catch(Exception e){ e.printStackTrace(); }
 	////////////////////////
 
-	final String TAG = "USERS_PAGE";
+	final String TAG = "NAVER_PLACE_USERS_PAGE";
+	final String USER_TYPE = "NP_";
 	request.setCharacterEncoding("utf-8");
 	Member member = (Member) session.getAttribute(Protocol.Json.KEY_MEMBER);
 
@@ -44,11 +46,12 @@
 	try{ setPage = Integer.parseInt( (String)request.getAttribute("page")); 	}catch(Exception e){ }
 
 
-	int totalCount  = DBConnector.getMemberListTotalCount(m_SearchType, m_SearchValue, member.getUSER_PERM(), member.getUSER_IDX());
-	List<Member> memberList = DBConnector.getMemberList(0, setPage - 1, m_SearchType, m_SearchValue, member.getUSER_PERM(), member.getUSER_IDX());
+	int totalCount  = DBConnector.getMemberListTotalCount(m_SearchType, m_SearchValue, member.getUSER_PERM(), USER_TYPE, member.getUSER_IDX());
+	List<Member> memberList = DBConnector.getMemberList(0, setPage - 1, m_SearchType, m_SearchValue, member.getUSER_PERM(), USER_TYPE, member.getUSER_IDX());
 
 	int idx = totalCount;
 
+	List<NaverPlaceSlotType> naverPlaceSlotTypeList = DBConnector.getNaverPlaceSlotType("Y");
 //		int totalCount  = "ADMN".equals(member.getPART_CODE()) ? DBConnector.getQuestionDataTotalCount(null, null, null) : DBConnector.getQuestionDataTotalCount(null, null, member.getUSER_IDX());
 //		List<Member> memberList = "ADMN".equals(member.getPART_CODE()) ? DBConnector.getQuestionDataList(0, setPage - 1, null, null, null) : DBConnector.getQuestionDataList(0, setPage - 1, null, null, member.getUSER_IDX());
 %>
@@ -73,7 +76,7 @@
 		formData.append("st", document.getElementById("searchType").value);
 		formData.append("sv", document.getElementById("searchValue").value);
 		$.ajax({
-			url: '/searchUser/1',
+			url: '/naverPlaceSearchUser/1',
 			type: "POST",
 			data: formData,
 			datatype: "json",
@@ -125,7 +128,7 @@
 								<button type="button" class="btn btn-primary ms-2 d-flex align-items-center" _msttexthash="9814740" _msthash="28" onclick="javascript:changeQuery()">
 									<i class="ti ti-search fs-4 me-2"></i>검색
 								</button>
-								<a href="/users" type="button" class="btn btn-outline-primary ms-2" _msttexthash="9814740" _msthash="28"><i class="ti ti-reload fs-6"></i></a>
+								<a href="/naver-place-users" type="button" class="btn btn-outline-primary ms-2" _msttexthash="9814740" _msthash="28"><i class="ti ti-reload fs-6"></i></a>
 							</div>
 						</div>
 					</div>
@@ -138,7 +141,7 @@
 					<div class="card-body p-4">
 						<div class="row">
 							<div class="col-lg-4">
-								<h5 class="card-title fw-semibold mb-4">유저 관리<%=totalCount>0?"("+totalCount+")":""%></h5>
+								<h5 class="card-title fw-semibold mb-4">네이버 플레이스<%=totalCount>0?"("+totalCount+")":""%></h5>
 							</div>
 							<div class="col-lg-8 text-end">
 								<button type="button" class="btn btn-primary mb-1" data-bs-toggle="modal" data-bs-target="#insertModal" data-bs-inidx="<%=member.getUSER_IDX()%>">
@@ -296,7 +299,7 @@
 				<ul class="pagination">
 					<li class="page-item">
 						<% 	if(setPage > 1){ %>
-						<a class="page-link d-flex border-0" href="/users/<%=setPage - 1%><%=Param%>">
+						<a class="page-link d-flex border-0" href="/naver-place-users/<%=setPage - 1%><%=Param%>">
 							<i class="ti ti-arrow-left fs-6 me-2"></i>Prev
 						</a>
 						<% } %>
@@ -306,20 +309,20 @@
 				<ul class="pagination d-none d-sm-block d-sm-flex">
 					<%
 						if(prev){
-							out.print("<li class=\"page-item \"><a class=\"page-link\" href=\"/users/"+(startPage - 10)+Param+"\"> << </a></li>");
+							out.print("<li class=\"page-item \"><a class=\"page-link\" href=\"/naver-place-users/"+(startPage - 10)+Param+"\"> << </a></li>");
 						}
 						for(int i=startPage; i<=endPage; i++){
-							out.print("<li class=\"page-item "+ (i==setPage ? "active" : "") +" \"><a class=\"page-link\" href=\"/users/"+(i)+Param+"\">"+(i)+"</a></li>");
+							out.print("<li class=\"page-item "+ (i==setPage ? "active" : "") +" \"><a class=\"page-link\" href=\"/naver-place-users/"+(i)+Param+"\">"+(i)+"</a></li>");
 						}
 						if(next){
-							out.print("<li class=\"page-item \"><a class=\"page-link\" href=\"/users/"+(startPage + 10)+Param+"\"> >> </a></li>");
+							out.print("<li class=\"page-item \"><a class=\"page-link\" href=\"/naver-place-users/"+(startPage + 10)+Param+"\"> >> </a></li>");
 						}
 					%>
 				</ul>
 				<ul class="pagination">
 					<li class="page-item">
 						<% if(setPage < tempEndPage){ %>
-						<a class="page-link d-flex border-0" href="/users/<%=setPage + 1%><%=Param%>" aria-label="Next">
+						<a class="page-link d-flex border-0" href="/naver-place-users/<%=setPage + 1%><%=Param%>" aria-label="Next">
 							Next<i class="ti ti-arrow-right fs-6 ms-2"></i>
 						</a>
 						<% } %>
@@ -433,24 +436,42 @@
 					<input type="hidden" class="USER_IDX_SL" id="USER_IDX_SL" name="USER_IDX_SL">
 					<input type="hidden" class="PAGE_SL" id="PAGE_SL" name="PAGE_SL">
 					<input type="hidden" class="PARAM_SL" id="PARAM_SL" name="PARAM_SL">
-					<input type="hidden" class="SLOT_ENDT_SL" id="SLOT_ENDT_SL" name="SLOT_ENDT_SL">
+<%--					<input type="hidden" class="SLOT_ENDT_SL" id="SLOT_ENDT_SL" name="SLOT_ENDT_SL">--%>
 					<div class="mb-3">
 						<label for="SLOT_EA_SL" class="col-form-label">추가개수</label>
 						<input type="number" class="form-control SLOT_EA_SL" id="SLOT_EA_SL" name="SLOT_EA_SL" value="1" min="1">
 					</div>
+					<%if("M".equals(member.getUSER_PERM())){%>
+					<div class="mb-3">
+						<label for="SLOT_TYPE_SL" class="col-form-label">슬롯타입</label>
+						<select class="form-select SLOT_TYPE_SL" id="SLOT_TYPE_SL" name="SLOT_TYPE_SL">
+							<option value="0">미선택</option>
+							<%for(int i=0; i< naverPlaceSlotTypeList.size(); i++){%>
+							<option value="<%=naverPlaceSlotTypeList.get(i).getNP_SLOT_TYPE_IDX()%>"><%=naverPlaceSlotTypeList.get(i).getTYPE_NAME()%></option>
+							<%}%>
+						</select>
+					</div>
+					<%}%>
 					<div class="mb-3">
 						<label for="SLOT_DAYS_SL" class="col-form-label">작업일수</label>
-<%--						<input type="number" class="form-control SLOT_DAYS_SL" id="SLOT_DAYS_SL" name="SLOT_DAYS_SL" value="7" min="1">--%>
-						<select class="form-select SLOT_DAYS_SL" id="SLOT_DAYS_SL" name="SLOT_DAYS_SL">
+						<input type="number" class="form-control SLOT_DAYS_SL" id="SLOT_DAYS_SL" name="SLOT_DAYS_SL" value="7" min="1" oninput="setEndDate()">
+						<%--<select class="form-select SLOT_DAYS_SL" id="SLOT_DAYS_SL" name="SLOT_DAYS_SL">
 							<option value="7">7일</option>
 							<option value="10">10일</option>
-						</select>
+						</select>--%>
 					</div>
 					<div class="mb-3">
 						<label for="SLOT_STDT_SL" class="col-form-label">시작일</label>
 						<div class="input-group me-2">
-							<input class="form-control rounded-end pe-5" type="text" id="SLOT_STDT_SL" name="SLOT_STDT_SL" readonly>
+							<input class="form-control rounded-end pe-5" type="text" id="SLOT_STDT_SL" name="SLOT_STDT_SL" onchange="setEndDate()" readonly>
 						</div>
+					</div>
+					<div class="mb-3">
+						<label for="SLOT_ENDT_SL" class="col-form-label">종료일</label>
+						<input type="text" class="form-control pe-5 SLOT_ENDT_SL" class="SLOT_ENDT_SL" id="SLOT_ENDT_SL" name="SLOT_ENDT_SL" readonly>
+						<%--<div class="input-group me-2">
+							<input class="form-control rounded-end pe-5" type="text" id="SLOT_STDT_SL" name="SLOT_STDT_SL" readonly>
+						</div>--%>
 					</div>
 				</form>
 			</div>
@@ -564,9 +585,18 @@
 			,changeMonth:true
 			,changeYear:true
 			,dateFormat:"yy-mm-dd"
-			,dayNames : ['월요일','화요일','수요일','목요일','금','토','일']
-			,dayNamesMin : ['월','화','수','목','금','토','일']
+			,dayNames : ['일요일','월요일','화요일','수요일','목요일','금요일','토요일']
+			,dayNamesMin : ['일','월','화','수','목','금','토']
 			,monthNamesShort:  [ "1월", "2월", "3월", "4월", "5월", "6월","7월", "8월", "9월", "10월", "11월", "12월" ]
+			,beforeShowDay: function(date) {
+				var today = new Date();
+				var tomorrow = new Date();
+				tomorrow.setDate(today.getDate() + 1);
+				// 비교할 때 시간 부분을 제거합니다.
+				today.setHours(0, 0, 0, 0);
+				tomorrow.setHours(0, 0, 0, 0);
+				return [date >= tomorrow, ""];
+			}
 			,showOtherMonths:true
 		});
 
@@ -590,6 +620,7 @@
 		$('#SLOT_STDT_SL').datepicker('disable').removeAttr('disabled')
 		<%}%>
 
+		setEndDate();
 	});
 </script>
 </body>
@@ -651,7 +682,7 @@
 				console.log('ajax: ' + json.value);
 				alert(json.alert);
 
-				location.href = "/users"+json.url;
+				location.href = "/naver-place-users"+json.url;
 			}
 		});
 	}
@@ -672,6 +703,17 @@
 			return;
 		}
 
+		const hiddenInput = document.createElement('input');
+		hiddenInput.type = 'hidden';
+		hiddenInput.name = 'USER_TYPE_IN';
+		hiddenInput.value = '<%=USER_TYPE%>';
+		<%if("M".equals(member.getUSER_PERM())){%>
+		if(form.USER_PERM_IN.value == 'M'){
+			hiddenInput.value = 'NS_NP_';
+		}
+		<%}%>
+		form.appendChild(hiddenInput);
+
 		form.setAttribute("charset", "UTF-8");
 		form.setAttribute("method", "Post");  //Post 방식
 		form.setAttribute("action", "/setUser"); //요청 보낼 주소
@@ -688,6 +730,17 @@
 			form.USER_PWD_UP.focus();
 			return;
 		}
+
+		const hiddenInput = document.createElement('input');
+		hiddenInput.type = 'hidden';
+		hiddenInput.name = 'USER_TYPE_UP';
+		hiddenInput.value = '<%=USER_TYPE%>';
+		<%if("M".equals(member.getUSER_PERM())){%>
+		if(form.USER_PERM_UP.value == 'M'){
+			hiddenInput.value = 'NS_NP_';
+		}
+		<%}%>
+		form.appendChild(hiddenInput);
 
 		form.setAttribute("charset", "UTF-8");
 		form.setAttribute("method", "Post");  //Post 방식
@@ -718,17 +771,33 @@
 			return;
 		}
 
-		const newDate = new Date(form.SLOT_STDT_SL.value)
-		newDate.setDate(newDate.getDate() + Number(form.SLOT_DAYS_SL.value) - 1);
+		/*const newDate = new Date(form.SLOT_STDT_SL.value)
+		newDate.setDate(newDate.getDate() + Number(form.SLOT_DAYS_SL.value) - 1);*/
 
 		form.SLOT_STDT_SL.value = form.SLOT_STDT_SL.value.replaceAll("-","");
-		form.SLOT_ENDT_SL.value = newDate.toISOString().substring(0,10).replaceAll("-","");
+		form.SLOT_ENDT_SL.value = form.SLOT_ENDT_SL.value.replaceAll("-","");
+		// form.SLOT_ENDT_SL.value = newDate.toISOString().substring(0,10).replaceAll("-","");
+
+		const hiddenInput = document.createElement('input');
+		hiddenInput.type = 'hidden';
+		hiddenInput.name = 'USER_TYPE_SL';
+		hiddenInput.value = '<%=USER_TYPE%>';
+		form.appendChild(hiddenInput);
 
 		form.setAttribute("charset", "UTF-8");
 		form.setAttribute("method", "Post");  //Post 방식
 		form.setAttribute("action", "/setSlot/"+form.USER_IDX_SL.value); //요청 보낼 주소
 		form.submit();
 
+	}
+
+	function setEndDate(){
+		var form = document.slotForm;
+
+		const newDate = new Date(form.SLOT_STDT_SL.value)
+		newDate.setDate(newDate.getDate() + Number(form.SLOT_DAYS_SL.value) - 1);
+
+		form.SLOT_ENDT_SL.value = newDate.toISOString().substring(0,10);
 	}
 </script>
 

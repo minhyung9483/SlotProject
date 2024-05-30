@@ -8,7 +8,7 @@
 <%@ page import="java.time.LocalDateTime" %>
 <%@ page import="java.time.format.DateTimeFormatter" %>
 <%@ page import="java.text.DecimalFormat" %>
-<%@ page import="com.slot.Model.LogSlot" %>
+<%@ page import="com.slot.Model.NaverShoppingLogSlot" %>
 <!doctype html>
 <html lang="ko">
 
@@ -28,7 +28,8 @@
 	}catch(Exception e){ e.printStackTrace(); }
 	////////////////////////
 
-	final String TAG = "LOG_SLOT_PAGE";
+	final String TAG = "NAVER_SHOPPING_LOG_SLOT_PAGE";
+	final String USER_TYPE = "NS_";
 	request.setCharacterEncoding("utf-8");
 	Member member = (Member) session.getAttribute(Protocol.Json.KEY_MEMBER);
 
@@ -55,8 +56,8 @@
 	if(m_StartDate == null || "".equals(m_StartDate))m_StartDate = Today;
 	if(m_EndDate == null || "".equals(m_EndDate))m_EndDate = Today;
 
-	int totalCount  = DBConnector.getLogSlotListTotalCount(m_SearchType, m_SearchValue, m_StartDate, m_EndDate, member.getUSER_PERM(), member.getUSER_IDX());
-	List<LogSlot> logSlotList = DBConnector.getLogSlotList(setPage - 1, m_SearchType, m_SearchValue, m_StartDate, m_EndDate, member.getUSER_PERM(), member.getUSER_IDX());
+	int totalCount  = DBConnector.getNaverShoppingLogSlotListTotalCount(m_SearchType, m_SearchValue, m_StartDate, m_EndDate, member.getUSER_PERM(), member.getUSER_IDX());
+	List<NaverShoppingLogSlot> logSlotList = DBConnector.getNaverShoppingLogSlotList(setPage - 1, m_SearchType, m_SearchValue, m_StartDate, m_EndDate, member.getUSER_PERM(), member.getUSER_IDX());
 
 	if(m_SearchType!= null && "INST_ACTN".equals(m_SearchType) && (m_SearchValue!=null && m_SearchValue.length() > 0)){
 		if("C".equals(m_SearchValue)){
@@ -103,7 +104,7 @@
 		formData.append("sd", document.getElementById("SLOG_STDT").value);
 		formData.append("ed", document.getElementById("SLOG_ENDT").value);
 		$.ajax({
-			url: '/searchLogSlot/1',
+			url: '/naverShoppingSearchLogSlot/1',
 			type: "POST",
 			data: formData,
 			datatype: "json",
@@ -135,6 +136,7 @@
 		formData.append("sv", document.getElementById("searchValue").value);
 		formData.append("sd", document.getElementById("SLOG_STDT").value);
 		formData.append("ed", document.getElementById("SLOG_ENDT").value);
+		formData.append("USER_TYPE", '<%=USER_TYPE%>');
 		$.ajax({
 			url: '/downloadLogSlot',
 			type: "POST",
@@ -301,7 +303,7 @@
 								<button type="button" class="btn btn-primary ms-2 d-flex align-items-center" _msttexthash="9814740" _msthash="28" onclick="javascript:changeQuery()">
 									<i class="ti ti-search fs-4 me-2"></i>검색
 								</button>
-								<a href="/log-slots" type="button" class="btn btn-outline-primary ms-2" _msttexthash="9814740" _msthash="28"><i class="ti ti-reload fs-6"></i></a>
+								<a href="/naver-shopping-log-slots" type="button" class="btn btn-outline-primary ms-2" _msttexthash="9814740" _msthash="28"><i class="ti ti-reload fs-6"></i></a>
 							</div>
 						</div>
 					</div>
@@ -313,10 +315,10 @@
 				<div class="card w-100">
 					<div class="card-body p-4">
 						<div class="row">
-							<div class="col-lg-5">
+							<div class="col-lg-6">
 								<div class="row">
 									<div class="col-lg-3">
-										<h5 class="card-title fw-semibold mb-4">슬롯 로그<%=totalCount>0?"("+totalCount+")":""%></h5>
+										<h5 class="card-title fw-semibold mb-4">네이버 쇼핑<%=totalCount>0?"("+totalCount+")":""%></h5>
 									</div>
 									<div class="col-lg-4">
 										<div class="input-group">
@@ -333,7 +335,7 @@
 									</div>
 								</div>
 							</div>
-							<div class="col-lg-7 text-end">
+							<div class="col-lg-6 text-end">
 								<%if(logSlotList.size()>0 && "M".equals(member.getUSER_PERM())){%>
 								<button type="button" class="btn btn-primary ms-2 mb-1" onclick="downloadExcel()">
 									엑셀로 내려받기
@@ -473,7 +475,7 @@
 				<ul class="pagination">
 					<li class="page-item">
 						<% 	if(setPage > 1){ %>
-						<a class="page-link d-flex border-0" href="/log-slots/<%=setPage - 1%><%=Param%>">
+						<a class="page-link d-flex border-0" href="/naver-shopping-log-slots/<%=setPage - 1%><%=Param%>">
 							<i class="ti ti-arrow-left fs-6 me-2"></i>Prev
 						</a>
 						<% } %>
@@ -483,20 +485,20 @@
 				<ul class="pagination d-none d-sm-block d-sm-flex">
 					<%
 						if(prev){
-							out.print("<li class=\"page-item \"><a class=\"page-link\" href=\"/log-slots/"+(startPage - 10)+Param+"\"> << </a></li>");
+							out.print("<li class=\"page-item \"><a class=\"page-link\" href=\"/naver-shopping-log-slots/"+(startPage - 10)+Param+"\"> << </a></li>");
 						}
 						for(int i=startPage; i<=endPage; i++){
-							out.print("<li class=\"page-item "+ (i==setPage ? "active" : "") +" \"><a class=\"page-link\" href=\"/log-slots/"+(i)+Param+"\">"+(i)+"</a></li>");
+							out.print("<li class=\"page-item "+ (i==setPage ? "active" : "") +" \"><a class=\"page-link\" href=\"/naver-shopping-log-slots/"+(i)+Param+"\">"+(i)+"</a></li>");
 						}
 						if(next){
-							out.print("<li class=\"page-item \"><a class=\"page-link\" href=\"/log-slots/"+(startPage + 10)+Param+"\"> >> </a></li>");
+							out.print("<li class=\"page-item \"><a class=\"page-link\" href=\"/naver-shopping-log-slots/"+(startPage + 10)+Param+"\"> >> </a></li>");
 						}
 					%>
 				</ul>
 				<ul class="pagination">
 					<li class="page-item">
 						<% if(setPage < tempEndPage){ %>
-						<a class="page-link d-flex border-0" href="/log-slots/<%=setPage + 1%><%=Param%>" aria-label="Next">
+						<a class="page-link d-flex border-0" href="/naver-shopping-log-slots/<%=setPage + 1%><%=Param%>" aria-label="Next">
 							Next<i class="ti ti-arrow-right fs-6 ms-2"></i>
 						</a>
 						<% } %>
@@ -538,8 +540,8 @@
 			,changeMonth:true
 			,changeYear:true
 			,dateFormat:"yy-mm-dd"
-			,dayNames : ['월요일','화요일','수요일','목요일','금','토','일']
-			,dayNamesMin : ['월','화','수','목','금','토','일']
+			,dayNames : ['일요일','월요일','화요일','수요일','목요일','금요일','토요일']
+			,dayNamesMin : ['일','월','화','수','목','금','토']
 			,monthNamesShort:  [ "1월", "2월", "3월", "4월", "5월", "6월","7월", "8월", "9월", "10월", "11월", "12월" ]
 			,showOtherMonths:true
 		});

@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Data
-public class LogSlot {
+public class NaverPlaceLogSlot {
 	private int LOG_SLOT_IDX;			// 로그 IDX
 	private int USER_IDX;			//
 	private String USER_ID;			//
@@ -15,9 +15,9 @@ public class LogSlot {
 	private int SLOT_DAYS;			//
 	private int SLOT_EA;			//
 	private int SLOT_IDX;			//
-	private String PROD_GID;			//
-	private String PROD_MID;			//
-	private String PROD_KYWD;			//
+	private String PLCE_NAME;			//
+	private String PLCE_CODE;			//
+	private String PLCE_KYWD;			//
 	private int INST_USER_IDX;			//
 	private String INST_USER_ID;			//
 	private String INST_DT;			//
