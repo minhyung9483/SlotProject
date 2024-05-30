@@ -199,9 +199,10 @@
 		menu.push("구분");
 		menu.push("기간");
 		menu.push("개수");
+		menu.push("슬롯타입");
+		menu.push("키워드");
 		menu.push("묶음MID");
 		menu.push("단품MID");
-		menu.push("키워드");
 		menu.push("생성자");
 		menu.push("생성일");
 
@@ -234,10 +235,10 @@
 			bottom.push(INST_ACTN);
 			bottom.push(data[i].SLOT_DAYS);
 			bottom.push(data[i].SLOT_EA);
-
+			bottom.push(data[i].TYPE_NAME);
+			bottom.push(data[i].PROD_KYWD);
 			bottom.push(data[i].PROD_GID);
 			bottom.push(data[i].PROD_MID);
-			bottom.push(data[i].PROD_KYWD);
 			bottom.push(data[i].INST_USER_ID);
 			bottom.push(data[i].INST_DT);
 			row.push(bottom);
@@ -253,15 +254,16 @@
 				{"width" : 20},
 				{"width" : 20},
 				{"width" : 20},
+				{"width" : 20},
 				{"width" : 15},
 				{"width" : 20}];
 		ws['!cols'] = wscols;
 		// 엑셀 파일 생성
 		const wb = XLSX.utils.book_new();
-		XLSX.utils.book_append_sheet(wb, ws, "슬롯로그");
+		XLSX.utils.book_append_sheet(wb, ws, "네이버쇼핑로그");
 
 		// 파일 저장
-		const fileName = "슬롯로그_<%=Today%>.xlsx";
+		const fileName = "네이버쇼핑로그_<%=Today%>.xlsx";
 		XLSX.writeFile(wb, fileName);
 
 	}
@@ -353,16 +355,17 @@
 							<table class="table text-nowrap mb-0 align-middle">
 								<colgroup>
 									<col width="6%">
-									<col width="12.5%">
+									<col width="10.5%">
 									<col width="7%">
 									<col width="6%">
 									<col width="6%">
-									<col width="12.5%">
-									<col width="12.5%">
-									<col width="12.5%">
-									<col width="12.5%">
-									<col width="12.5%">
-									<col width="12.5%">
+
+									<col width="10.5%">
+									<col width="10.5%">
+									<col width="10.5%">
+									<col width="10.5%">
+									<col width="10.5%">
+									<col width="10.5%">
 								</colgroup>
 								<thead class="text-dark fs-4 text-center bg-light-gray border-top">
 								<tr>
@@ -370,7 +373,7 @@
 										//////////////////////////////////////
 										//////		Title Setting		//////
 										//////////////////////////////////////
-										String[] Title = new String[]{"번호", "아이디", "구분", "기간", "개수", "묶음MID", "단품MID", "키워드", "생성자", "생성일"};
+										String[] Title = new String[]{"번호", "아이디", "구분", "기간", "개수", "슬롯타입", "키워드", "묶음MID", "단품MID", "생성자", "생성일"};
 
 										for(int i=0;i<Title.length;i++){
 											out.print("<th class=\" align-middle\">");
@@ -421,13 +424,16 @@
 										<input type="text" class="form-control-plaintext text-center" id="EA_<%=logSlotList.get(i).getLOG_SLOT_IDX()%>" name="EA_<%=logSlotList.get(i).getLOG_SLOT_IDX()%>" value="<%=logSlotList.get(i).getSLOT_EA()%>" title="<%=logSlotList.get(i).getSLOT_EA()%>" readonly>
 									</td>
 									<td class="">
+										<input type="text" class="form-control-plaintext text-center" id="NAME_<%=logSlotList.get(i).getLOG_SLOT_IDX()%>" name="NAME_<%=logSlotList.get(i).getLOG_SLOT_IDX()%>" value="<%=!"".equals(logSlotList.get(i).getTYPE_NAME())&&logSlotList.get(i).getTYPE_NAME()!=null ? logSlotList.get(i).getTYPE_NAME() : "-"%>" title="<%=!"".equals(logSlotList.get(i).getTYPE_NAME())&&logSlotList.get(i).getTYPE_NAME()!=null ? logSlotList.get(i).getTYPE_NAME() : "-"%>" readonly>
+									</td>
+									<td class="">
+										<input type="text" class="form-control-plaintext text-center" id="KYWD_<%=logSlotList.get(i).getLOG_SLOT_IDX()%>" name="KYWD_<%=logSlotList.get(i).getLOG_SLOT_IDX()%>" value="<%=!"".equals(logSlotList.get(i).getPROD_KYWD()) ? logSlotList.get(i).getPROD_KYWD() : "-"%>" title="<%=!"".equals(logSlotList.get(i).getPROD_KYWD()) ? logSlotList.get(i).getPROD_KYWD() : "-"%>" readonly>
+									</td>
+									<td class="">
 										<input type="text" class="form-control-plaintext text-center" id="GID_<%=logSlotList.get(i).getLOG_SLOT_IDX()%>" name="GID_<%=logSlotList.get(i).getLOG_SLOT_IDX()%>" value="<%=!"".equals(logSlotList.get(i).getPROD_GID()) ? logSlotList.get(i).getPROD_GID() : "-"%>" title="<%=!"".equals(logSlotList.get(i).getPROD_GID()) ? logSlotList.get(i).getPROD_GID() : "-"%>" readonly>
 									</td>
 									<td class="">
 										<input type="text" class="form-control-plaintext text-center" id="MID_<%=logSlotList.get(i).getLOG_SLOT_IDX()%>" name="MID_<%=logSlotList.get(i).getLOG_SLOT_IDX()%>" value="<%=!"".equals(logSlotList.get(i).getPROD_MID()) ? logSlotList.get(i).getPROD_MID() : "-"%>" title="<%=!"".equals(logSlotList.get(i).getPROD_MID()) ? logSlotList.get(i).getPROD_MID() : "-"%>" readonly>
-									</td>
-									<td class="">
-										<input type="text" class="form-control-plaintext text-center" id="KYWD_<%=logSlotList.get(i).getLOG_SLOT_IDX()%>" name="KYWD_<%=logSlotList.get(i).getLOG_SLOT_IDX()%>" value="<%=!"".equals(logSlotList.get(i).getPROD_KYWD()) ? logSlotList.get(i).getPROD_KYWD() : "-"%>" title="<%=!"".equals(logSlotList.get(i).getPROD_KYWD()) ? logSlotList.get(i).getPROD_KYWD() : "-"%>" readonly>
 									</td>
 									<td class="">
 										<input type="text" class="form-control-plaintext text-center" id="INST_<%=logSlotList.get(i).getLOG_SLOT_IDX()%>" name="INST_<%=logSlotList.get(i).getLOG_SLOT_IDX()%>" value="<%=logSlotList.get(i).getINST_USER_ID()%>" title="<%=logSlotList.get(i).getINST_USER_ID()%>" readonly>

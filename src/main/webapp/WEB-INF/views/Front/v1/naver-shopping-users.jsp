@@ -442,17 +442,14 @@
 						<label for="SLOT_EA_SL" class="col-form-label">추가개수</label>
 						<input type="number" class="form-control SLOT_EA_SL" id="SLOT_EA_SL" name="SLOT_EA_SL" value="1" min="1">
 					</div>
-					<%if("M".equals(member.getUSER_PERM())){%>
 					<div class="mb-3">
 						<label for="SLOT_TYPE_SL" class="col-form-label">슬롯타입</label>
 						<select class="form-select SLOT_TYPE_SL" id="SLOT_TYPE_SL" name="SLOT_TYPE_SL">
-							<option value="0">미선택</option>
 							<%for(int i=0; i< naverShoppingSlotTypeList.size(); i++){%>
 							<option value="<%=naverShoppingSlotTypeList.get(i).getNS_SLOT_TYPE_IDX()%>"><%=naverShoppingSlotTypeList.get(i).getTYPE_NAME()%></option>
 							<%}%>
 						</select>
 					</div>
-					<%}%>
 					<div class="mb-3">
 						<label for="SLOT_DAYS_SL" class="col-form-label">작업일수</label>
 						<input type="number" class="form-control SLOT_DAYS_SL" id="SLOT_DAYS_SL" name="SLOT_DAYS_SL" value="7" min="1" oninput="setEndDate()">
@@ -617,9 +614,7 @@
 
 		$('#SLOT_STDT_SL').datepicker('setDate', '+1D'); //(-1D:하루전, -1M:한달전, -1Y:일년전), (+1D:하루후, -1M:한달후, -1Y:일년후)
 
-		<%if(!"M".equals(member.getUSER_PERM())){%>
-		$('#SLOT_STDT_SL').datepicker('disable').removeAttr('disabled')
-		<%}%>
+		// $('#SLOT_STDT_SL').datepicker('disable').removeAttr('disabled')
 
 		setEndDate();
 	});

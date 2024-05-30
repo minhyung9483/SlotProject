@@ -299,16 +299,7 @@
 										<input type="text" class="form-control-plaintext text-center" id="ID_<%=slotList.get(i).getSLOT_IDX()%>" name="ID_<%=slotList.get(i).getSLOT_IDX()%>" value="<%=slotList.get(i).getUSER_ID()%>" title="<%=slotList.get(i).getUSER_ID()%>" readonly>
 									</td>
 									<td class=""><%--슬롯타입--%>
-										<%if("M".equals(member.getUSER_PERM())){%>
-										<select class="form-select" id="TYPE_<%=slotList.get(i).getSLOT_IDX()%>" name="TYPE_<%=slotList.get(i).getSLOT_IDX()%>">
-											<option value="0">미선택</option>
-											<%for(int j=0; j< naverPlaceSlotTypeList.size(); j++){%>
-											<option value="<%=naverPlaceSlotTypeList.get(j).getNP_SLOT_TYPE_IDX()%>" <%=slotList.get(i).getNP_SLOT_TYPE_IDX()==naverPlaceSlotTypeList.get(j).getNP_SLOT_TYPE_IDX()?"selected":""%>><%=naverPlaceSlotTypeList.get(j).getTYPE_NAME()%></option>
-											<%}%>
-										</select>
-										<%}else{%>
 										<input type="text" class="form-control-plaintext text-center" id="TYPE_<%=slotList.get(i).getSLOT_IDX()%>" name="TYPE_<%=slotList.get(i).getSLOT_IDX()%>" value="<%=slotList.get(i).getTYPE_NAME()==null?"":slotList.get(i).getTYPE_NAME()%>" title="<%=slotList.get(i).getTYPE_NAME()==null?"":slotList.get(i).getTYPE_NAME()%>" readonly>
-										<%}%>
 									</td>
 									<td class=""><%--키워드--%>
 										<input type="text" class="form-control text-center" id="KYWD_<%=slotList.get(i).getSLOT_IDX()%>" name="KYWD_<%=slotList.get(i).getSLOT_IDX()%>" value="<%=!"".equals(slotList.get(i).getPLCE_KYWD()) ? slotList.get(i).getPLCE_KYWD() : ""%>" title="<%=!"".equals(slotList.get(i).getPLCE_KYWD()) ? slotList.get(i).getPLCE_KYWD() : ""%>">

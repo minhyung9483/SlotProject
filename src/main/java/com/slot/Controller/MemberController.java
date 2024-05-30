@@ -137,7 +137,7 @@ public class MemberController {
 				return "redirect:/naver-"+RETURN_URL+"-users";
 			}
 
-			Member m = DBConnector.getMemberList(UserIdx , 0, null, null, member.getUSER_PERM(), null, member.getUSER_IDX()).get(0);
+			Member m = DBConnector.getMemberList(UserIdx , 0, null, null, member.getUSER_PERM(), USER_TYPE, member.getUSER_IDX()).get(0);
 			if(m != null){
 				if("M".equals(member.getUSER_PERM())){
 					String USER_PWD = Request.getParameter("USER_PWD_UP");

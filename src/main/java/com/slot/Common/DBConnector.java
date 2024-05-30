@@ -332,37 +332,73 @@ public class DBConnector {
 		Connection conn = null;
 		PreparedStatement psmt = null;
 		List<Member> result = new ArrayList<>();
-		String sql = "SELECT\n" +
-				"M.USER_IDX,\n" +
-				"M.USER_ID,\n" +
-				"M.USER_PWD,\n" +
-				"M.USER_PERM,\n" +
-				"M.USER_TYPE,\n" +
-				"IFNULL(SLOT_EA, 0) AS SLOT_EA,\n" +
-				"M.USER_MEMO,\n" +
-				"M.USE_YN,\n" +
-				"M.INST_ADMN AS INST_ADMN_IDX,\n" +
-				"M_IN.USER_ID AS INST_ADMN,\n" +
-				"DATE_FORMAT(M.INST_DT, '%Y.%m.%d (%H:%i)') AS INST_DT,\n" +
-				"DATE_FORMAT(M.CONN_DT, '%Y.%m.%d (%H:%i)') AS CONN_DT\n" +
-				"FROM TB_MEMBER M\n" +
-				"JOIN TB_MEMBER M_IN ON M.INST_ADMN = M_IN.USER_IDX\n" +
-				"LEFT JOIN (\n" +
-				"SELECT USER_IDX, COUNT(*) AS SLOT_EA \n" +
-				"FROM TB_NS_SLOT \n" +
-				"WHERE USE_YN = 'Y' \n" +
-				"AND CONCAT(DATE_FORMAT(SLOT_ENDT, '%Y-%m-%d'), ' 23:59:59') > CURDATE()\n" +
+		String sql = "";
+
+		if(USER_TYPE.contains("NS")){
+			sql = "SELECT\n" +
+					"M.USER_IDX,\n" +
+					"M.USER_ID,\n" +
+					"M.USER_PWD,\n" +
+					"M.USER_PERM,\n" +
+					"M.USER_TYPE,\n" +
+					"IFNULL(SLOT_EA, 0) AS SLOT_EA,\n" +
+					"M.USER_MEMO,\n" +
+					"M.USE_YN,\n" +
+					"M.INST_ADMN AS INST_ADMN_IDX,\n" +
+					"M_IN.USER_ID AS INST_ADMN,\n" +
+					"DATE_FORMAT(M.INST_DT, '%Y.%m.%d (%H:%i)') AS INST_DT,\n" +
+					"DATE_FORMAT(M.CONN_DT, '%Y.%m.%d (%H:%i)') AS CONN_DT\n" +
+					"FROM TB_MEMBER M\n" +
+					"JOIN TB_MEMBER M_IN ON M.INST_ADMN = M_IN.USER_IDX\n" +
+					"LEFT JOIN (\n" +
+					"SELECT USER_IDX, COUNT(*) AS SLOT_EA \n" +
+					"FROM TB_NS_SLOT \n" +
+					"WHERE USE_YN = 'Y' \n" +
+					"AND CONCAT(DATE_FORMAT(SLOT_ENDT, '%Y-%m-%d'), ' 23:59:59') > CURDATE()\n" +
 //				"AND CONCAT(DATE_FORMAT(SLOT_STDT, '%Y-%m-%d'), ' 00:00:00') <= CURDATE()\n" +
-				"GROUP BY USER_IDX\n" +
-				") S ON M.USER_IDX = S.USER_IDX\n" +
-				"WHERE M.USE_YN = 'Y' \n" +
-				(USER_IDX > 0 ? "AND M.USER_IDX = '"+USER_IDX+"' \n" : "") +
+					"GROUP BY USER_IDX\n" +
+					") S ON M.USER_IDX = S.USER_IDX\n" +
+					"WHERE M.USE_YN = 'Y' \n" +
+					(USER_IDX > 0 ? "AND M.USER_IDX = '"+USER_IDX+"' \n" : "") +
 //				("M".equals(USER_PERM) ? "" : "AND M.INST_ADMN = '"+INST_ADMN_IDX+"' \n") +
-				("G".equals(USER_PERM) && INST_ADMN_IDX > 0 ? "AND (M.USER_IDX = '"+INST_ADMN_IDX+"' OR M.INST_ADMN = '"+INST_ADMN_IDX+"') \n" : "") + //총판일때
-				//(USER_TYPE!=null && USER_TYPE.length() > 0? "AND (M.USER_TYPE = '"+USER_TYPE+"') \n" : "") + //유저타입
-				(USER_TYPE!=null && USER_TYPE.length() > 0? "AND (M.USER_TYPE LIKE '%"+USER_TYPE+"%') \n" : "") + //유저타입
-				(SearchType!=null && SearchType.length() > 0 && SearchData!=null && SearchData.length() > 0 ? " AND M." + SearchType + " LIKE '%" + SearchData + "%'"  : "") +
-				"ORDER BY M.USER_IDX DESC LIMIT ?, 10";
+					("G".equals(USER_PERM) && INST_ADMN_IDX > 0 ? "AND (M.USER_IDX = '"+INST_ADMN_IDX+"' OR M.INST_ADMN = '"+INST_ADMN_IDX+"') \n" : "") + //총판일때
+					//(USER_TYPE!=null && USER_TYPE.length() > 0? "AND (M.USER_TYPE = '"+USER_TYPE+"') \n" : "") + //유저타입
+					(USER_TYPE!=null && USER_TYPE.length() > 0? "AND (M.USER_TYPE LIKE '%"+USER_TYPE+"%') \n" : "") + //유저타입
+					(SearchType!=null && SearchType.length() > 0 && SearchData!=null && SearchData.length() > 0 ? " AND M." + SearchType + " LIKE '%" + SearchData + "%'"  : "") +
+					"ORDER BY M.USER_IDX DESC LIMIT ?, 10";
+		}else if(USER_TYPE.contains("NP")){
+			sql = "SELECT\n" +
+					"M.USER_IDX,\n" +
+					"M.USER_ID,\n" +
+					"M.USER_PWD,\n" +
+					"M.USER_PERM,\n" +
+					"M.USER_TYPE,\n" +
+					"IFNULL(SLOT_EA, 0) AS SLOT_EA,\n" +
+					"M.USER_MEMO,\n" +
+					"M.USE_YN,\n" +
+					"M.INST_ADMN AS INST_ADMN_IDX,\n" +
+					"M_IN.USER_ID AS INST_ADMN,\n" +
+					"DATE_FORMAT(M.INST_DT, '%Y.%m.%d (%H:%i)') AS INST_DT,\n" +
+					"DATE_FORMAT(M.CONN_DT, '%Y.%m.%d (%H:%i)') AS CONN_DT\n" +
+					"FROM TB_MEMBER M\n" +
+					"JOIN TB_MEMBER M_IN ON M.INST_ADMN = M_IN.USER_IDX\n" +
+					"LEFT JOIN (\n" +
+					"SELECT USER_IDX, COUNT(*) AS SLOT_EA \n" +
+					"FROM TB_NP_SLOT \n" +
+					"WHERE USE_YN = 'Y' \n" +
+					"AND CONCAT(DATE_FORMAT(SLOT_ENDT, '%Y-%m-%d'), ' 23:59:59') > CURDATE()\n" +
+//				"AND CONCAT(DATE_FORMAT(SLOT_STDT, '%Y-%m-%d'), ' 00:00:00') <= CURDATE()\n" +
+					"GROUP BY USER_IDX\n" +
+					") S ON M.USER_IDX = S.USER_IDX\n" +
+					"WHERE M.USE_YN = 'Y' \n" +
+					(USER_IDX > 0 ? "AND M.USER_IDX = '"+USER_IDX+"' \n" : "") +
+//				("M".equals(USER_PERM) ? "" : "AND M.INST_ADMN = '"+INST_ADMN_IDX+"' \n") +
+					("G".equals(USER_PERM) && INST_ADMN_IDX > 0 ? "AND (M.USER_IDX = '"+INST_ADMN_IDX+"' OR M.INST_ADMN = '"+INST_ADMN_IDX+"') \n" : "") + //총판일때
+					//(USER_TYPE!=null && USER_TYPE.length() > 0? "AND (M.USER_TYPE = '"+USER_TYPE+"') \n" : "") + //유저타입
+					(USER_TYPE!=null && USER_TYPE.length() > 0? "AND (M.USER_TYPE LIKE '%"+USER_TYPE+"%') \n" : "") + //유저타입
+					(SearchType!=null && SearchType.length() > 0 && SearchData!=null && SearchData.length() > 0 ? " AND M." + SearchType + " LIKE '%" + SearchData + "%'"  : "") +
+					"ORDER BY M.USER_IDX DESC LIMIT ?, 10";
+		}
 
 		try {
 			Class.forName(JDBC_DRIVER);
@@ -887,19 +923,14 @@ public class DBConnector {
 	}
 
 	public static boolean UpdateNaverShoppingSlotInfo(int SLOT_IDX, String PROD_GID, String PROD_MID, String PROD_KYWD,
-										  String PROD_URL, String SLOT_STAT, int USER_IDX, String USER_PERM, int SLOT_TYPE) {
+										  String PROD_URL, String SLOT_STAT, int USER_IDX) {
 		Logger.LogOn(false);
 		Connection conn = null;
 		PreparedStatement psmt = null;
 		String sql = "";
 
-		if("M".equals(USER_PERM)){
-			sql = "UPDATE TB_NS_SLOT SET PROD_GID = ?, PROD_MID = ?, PROD_KYWD = ?, PROD_URL = ?, SLOT_STAT = ?, NS_SLOT_TYPE_IDX = ?, UPDT_USER = ?, UPDT_DT = NOW() \n" +
-					"WHERE SLOT_IDX = ?";
-		}else{
-			sql = "UPDATE TB_NS_SLOT SET PROD_GID = ?, PROD_MID = ?, PROD_KYWD = ?, PROD_URL = ?, SLOT_STAT = ?, UPDT_USER = ?, UPDT_DT = NOW() \n" +
-					"WHERE SLOT_IDX = ?";
-		}
+		sql = "UPDATE TB_NS_SLOT SET PROD_GID = ?, PROD_MID = ?, PROD_KYWD = ?, PROD_URL = ?, SLOT_STAT = ?, UPDT_USER = ?, UPDT_DT = NOW() \n" +
+				"WHERE SLOT_IDX = ?";
 
 		try {
 			Class.forName(JDBC_DRIVER);
@@ -911,14 +942,8 @@ public class DBConnector {
 			psmt.setString(3, PROD_KYWD);
 			psmt.setString(4, PROD_URL);
 			psmt.setString(5, SLOT_STAT);
-			if("M".equals(USER_PERM)){
-				psmt.setInt(6, SLOT_TYPE);
-				psmt.setInt(7, USER_IDX);
-				psmt.setInt(8, SLOT_IDX);
-			}else{
-				psmt.setInt(6, USER_IDX);
-				psmt.setInt(7, SLOT_IDX);
-			}
+			psmt.setInt(6, USER_IDX);
+			psmt.setInt(7, SLOT_IDX);
 			psmt.execute();
 
 			psmt.close();
@@ -1041,6 +1066,7 @@ public class DBConnector {
 							"LEFT JOIN TB_NS_SLOT S ON L.SLOT_IDX = S.SLOT_IDX \n" +
 							"LEFT JOIN TB_MEMBER M ON S.USER_IDX = M.USER_IDX \n" +
 							"LEFT JOIN TB_MEMBER M_IN ON L.INST_USER = M_IN.USER_IDX \n" +
+							"LEFT JOIN TB_NS_SLOT_TYPE ST ON S.NS_SLOT_TYPE_IDX = ST.NS_SLOT_TYPE_IDX AND ST.USE_YN = 'Y' \n" +
 							"WHERE 1=1 \n" +
 							(SLOG_STDT!=null && SLOG_STDT.length() > 0 ? " AND CONCAT(DATE_FORMAT(" + SLOG_STDT + ", '%Y-%m-%d'), ' 00:00:00') <= L.INST_DT \n"  : "") + //시작일
 							(SLOG_ENDT!=null && SLOG_ENDT.length() > 0 ? " AND CONCAT(DATE_FORMAT(" + SLOG_ENDT + ", '%Y-%m-%d'), ' 23:59:59') > L.INST_DT \n"  : "") + //종료일
@@ -1097,6 +1123,8 @@ public class DBConnector {
 		String sql = "SELECT \n" +
 				"L.LOG_SLOT_IDX, \n" +
 				"M.USER_IDX, \n" +
+				"S.NS_SLOT_TYPE_IDX,\n" +
+				"ST.TYPE_NAME,\n" +
 				"M.USER_ID, \n" +
 				"L.INST_ACTN, \n" +
 				"L.SLOT_DAYS, \n" +
@@ -1113,6 +1141,7 @@ public class DBConnector {
 				"LEFT JOIN TB_NS_SLOT S ON L.SLOT_IDX = S.SLOT_IDX \n" +
 				"LEFT JOIN TB_MEMBER M ON S.USER_IDX = M.USER_IDX \n" +
 				"LEFT JOIN TB_MEMBER M_IN ON L.INST_USER = M_IN.USER_IDX \n" +
+				"LEFT JOIN TB_NS_SLOT_TYPE ST ON S.NS_SLOT_TYPE_IDX = ST.NS_SLOT_TYPE_IDX AND ST.USE_YN = 'Y' \n" +
 				"WHERE 1=1 \n" +
 				(SLOG_STDT!=null && SLOG_STDT.length() > 0 ? " AND CONCAT(DATE_FORMAT(" + SLOG_STDT + ", '%Y-%m-%d'), ' 00:00:00') <= L.INST_DT \n"  : "") + //시작일
 				(SLOG_ENDT!=null && SLOG_ENDT.length() > 0 ? " AND CONCAT(DATE_FORMAT(" + SLOG_ENDT + ", '%Y-%m-%d'), ' 23:59:59') > L.INST_DT \n"  : "") + //종료일
@@ -1137,6 +1166,8 @@ public class DBConnector {
 					NaverShoppingLogSlot ls = new NaverShoppingLogSlot();
 					ls.setLOG_SLOT_IDX(rs.getInt("LOG_SLOT_IDX"));
 					ls.setUSER_IDX(rs.getInt("USER_IDX"));
+					ls.setNS_SLOT_TYPE_IDX(rs.getInt("NS_SLOT_TYPE_IDX"));
+					ls.setTYPE_NAME(rs.getString("TYPE_NAME"));
 					ls.setUSER_ID(rs.getString("USER_ID"));
 					ls.setINST_ACTN(rs.getString("INST_ACTN"));
 					ls.setSLOT_DAYS(rs.getInt("SLOT_DAYS"));
@@ -1192,6 +1223,8 @@ public class DBConnector {
 		String sql = "SELECT \n" +
 				"L.LOG_SLOT_IDX, \n" +
 				"M.USER_IDX, \n" +
+				"S.NS_SLOT_TYPE_IDX,\n" +
+				"ST.TYPE_NAME,\n" +
 				"M.USER_ID, \n" +
 				"L.INST_ACTN, \n" +
 				"L.SLOT_DAYS, \n" +
@@ -1208,6 +1241,7 @@ public class DBConnector {
 				"LEFT JOIN TB_NS_SLOT S ON L.SLOT_IDX = S.SLOT_IDX \n" +
 				"LEFT JOIN TB_MEMBER M ON S.USER_IDX = M.USER_IDX \n" +
 				"LEFT JOIN TB_MEMBER M_IN ON L.INST_USER = M_IN.USER_IDX \n" +
+				"LEFT JOIN TB_NS_SLOT_TYPE ST ON S.NS_SLOT_TYPE_IDX = ST.NS_SLOT_TYPE_IDX AND ST.USE_YN = 'Y' \n" +
 				"WHERE 1=1 \n" +
 				(SLOG_STDT!=null && SLOG_STDT.length() > 0 ? " AND CONCAT(DATE_FORMAT(" + SLOG_STDT + ", '%Y-%m-%d'), ' 00:00:00') <= L.INST_DT \n"  : "") + //시작일
 				(SLOG_ENDT!=null && SLOG_ENDT.length() > 0 ? " AND CONCAT(DATE_FORMAT(" + SLOG_ENDT + ", '%Y-%m-%d'), ' 23:59:59') > L.INST_DT \n"  : "") + //종료일
@@ -1231,6 +1265,8 @@ public class DBConnector {
 					JSONObject data = new JSONObject();
 					data.put("LOG_SLOT_IDX",rs.getInt("LOG_SLOT_IDX"));
 					data.put("USER_IDX",rs.getInt("USER_IDX"));
+					data.put("NS_SLOT_TYPE_IDX",rs.getInt("NS_SLOT_TYPE_IDX"));
+					data.put("TYPE_NAME",rs.getString("TYPE_NAME"));
 					data.put("USER_ID",rs.getString("USER_ID"));
 					data.put("INST_ACTN",rs.getString("INST_ACTN"));
 					data.put("SLOT_DAYS",rs.getInt("SLOT_DAYS"));
@@ -1552,19 +1588,14 @@ public class DBConnector {
 	}
 
 	public static boolean UpdateNaverPlaceSlotInfo(int SLOT_IDX, String PLCE_NAME, String PLCE_CODE, String PLCE_KYWD,
-												   String PLCE_URL, String SLOT_STAT, int USER_IDX, String USER_PERM, int SLOT_TYPE) {
+												   String PLCE_URL, String SLOT_STAT, int USER_IDX) {
 		Logger.LogOn(false);
 		Connection conn = null;
 		PreparedStatement psmt = null;
 		String sql = "";
 
-		if("M".equals(USER_PERM)){
-			sql = "UPDATE TB_NP_SLOT SET PLCE_NAME = ?, PLCE_CODE = ?, PLCE_KYWD = ?, PLCE_URL = ?, SLOT_STAT = ?, NP_SLOT_TYPE_IDX = ?,UPDT_USER = ?, UPDT_DT = NOW() \n" +
-					"WHERE SLOT_IDX = ?";
-		}else{
-			sql = "UPDATE TB_NP_SLOT SET PLCE_NAME = ?, PLCE_CODE = ?, PLCE_KYWD = ?, PLCE_URL = ?, SLOT_STAT = ?, UPDT_USER = ?, UPDT_DT = NOW() \n" +
-					"WHERE SLOT_IDX = ?";
-		}
+		sql = "UPDATE TB_NP_SLOT SET PLCE_NAME = ?, PLCE_CODE = ?, PLCE_KYWD = ?, PLCE_URL = ?, SLOT_STAT = ?, UPDT_USER = ?, UPDT_DT = NOW() \n" +
+				"WHERE SLOT_IDX = ?";
 
 		try {
 			Class.forName(JDBC_DRIVER);
@@ -1576,14 +1607,8 @@ public class DBConnector {
 			psmt.setString(3, PLCE_KYWD);
 			psmt.setString(4, PLCE_URL);
 			psmt.setString(5, SLOT_STAT);
-			if("M".equals(USER_PERM)){
-				psmt.setInt(6, SLOT_TYPE);
-				psmt.setInt(7, USER_IDX);
-				psmt.setInt(8, SLOT_IDX);
-			}else{
-				psmt.setInt(6, USER_IDX);
-				psmt.setInt(7, SLOT_IDX);
-			}
+			psmt.setInt(6, USER_IDX);
+			psmt.setInt(7, SLOT_IDX);
 			psmt.execute();
 
 			psmt.close();
@@ -1706,6 +1731,7 @@ public class DBConnector {
 							"LEFT JOIN TB_NP_SLOT S ON L.SLOT_IDX = S.SLOT_IDX \n" +
 							"LEFT JOIN TB_MEMBER M ON S.USER_IDX = M.USER_IDX \n" +
 							"LEFT JOIN TB_MEMBER M_IN ON L.INST_USER = M_IN.USER_IDX \n" +
+							"LEFT JOIN TB_NP_SLOT_TYPE ST ON S.NP_SLOT_TYPE_IDX = ST.NP_SLOT_TYPE_IDX AND ST.USE_YN = 'Y' \n" +
 							"WHERE 1=1 \n" +
 							(SLOG_STDT!=null && SLOG_STDT.length() > 0 ? " AND CONCAT(DATE_FORMAT(" + SLOG_STDT + ", '%Y-%m-%d'), ' 00:00:00') <= L.INST_DT \n"  : "") + //시작일
 							(SLOG_ENDT!=null && SLOG_ENDT.length() > 0 ? " AND CONCAT(DATE_FORMAT(" + SLOG_ENDT + ", '%Y-%m-%d'), ' 23:59:59') > L.INST_DT \n"  : "") + //종료일
@@ -1762,6 +1788,8 @@ public class DBConnector {
 		String sql = "SELECT \n" +
 				"L.LOG_SLOT_IDX, \n" +
 				"M.USER_IDX, \n" +
+				"S.NP_SLOT_TYPE_IDX,\n" +
+				"ST.TYPE_NAME,\n" +
 				"M.USER_ID, \n" +
 				"L.INST_ACTN, \n" +
 				"L.SLOT_DAYS, \n" +
@@ -1778,6 +1806,7 @@ public class DBConnector {
 				"LEFT JOIN TB_NP_SLOT S ON L.SLOT_IDX = S.SLOT_IDX \n" +
 				"LEFT JOIN TB_MEMBER M ON S.USER_IDX = M.USER_IDX \n" +
 				"LEFT JOIN TB_MEMBER M_IN ON L.INST_USER = M_IN.USER_IDX \n" +
+				"LEFT JOIN TB_NP_SLOT_TYPE ST ON S.NP_SLOT_TYPE_IDX = ST.NP_SLOT_TYPE_IDX AND ST.USE_YN = 'Y' \n" +
 				"WHERE 1=1 \n" +
 				(SLOG_STDT!=null && SLOG_STDT.length() > 0 ? " AND CONCAT(DATE_FORMAT(" + SLOG_STDT + ", '%Y-%m-%d'), ' 00:00:00') <= L.INST_DT \n"  : "") + //시작일
 				(SLOG_ENDT!=null && SLOG_ENDT.length() > 0 ? " AND CONCAT(DATE_FORMAT(" + SLOG_ENDT + ", '%Y-%m-%d'), ' 23:59:59') > L.INST_DT \n"  : "") + //종료일
@@ -1802,6 +1831,8 @@ public class DBConnector {
 					NaverPlaceLogSlot ls = new NaverPlaceLogSlot();
 					ls.setLOG_SLOT_IDX(rs.getInt("LOG_SLOT_IDX"));
 					ls.setUSER_IDX(rs.getInt("USER_IDX"));
+					ls.setNP_SLOT_TYPE_IDX(rs.getInt("NP_SLOT_TYPE_IDX"));
+					ls.setTYPE_NAME(rs.getString("TYPE_NAME"));
 					ls.setUSER_ID(rs.getString("USER_ID"));
 					ls.setINST_ACTN(rs.getString("INST_ACTN"));
 					ls.setSLOT_DAYS(rs.getInt("SLOT_DAYS"));
@@ -1857,6 +1888,8 @@ public class DBConnector {
 		String sql = "SELECT \n" +
 				"L.LOG_SLOT_IDX, \n" +
 				"M.USER_IDX, \n" +
+				"S.NP_SLOT_TYPE_IDX,\n" +
+				"ST.TYPE_NAME,\n" +
 				"M.USER_ID, \n" +
 				"L.INST_ACTN, \n" +
 				"L.SLOT_DAYS, \n" +
@@ -1873,6 +1906,7 @@ public class DBConnector {
 				"LEFT JOIN TB_NP_SLOT S ON L.SLOT_IDX = S.SLOT_IDX \n" +
 				"LEFT JOIN TB_MEMBER M ON S.USER_IDX = M.USER_IDX \n" +
 				"LEFT JOIN TB_MEMBER M_IN ON L.INST_USER = M_IN.USER_IDX \n" +
+				"LEFT JOIN TB_NP_SLOT_TYPE ST ON S.NP_SLOT_TYPE_IDX = ST.NP_SLOT_TYPE_IDX AND ST.USE_YN = 'Y' \n" +
 				"WHERE 1=1 \n" +
 				(SLOG_STDT!=null && SLOG_STDT.length() > 0 ? " AND CONCAT(DATE_FORMAT(" + SLOG_STDT + ", '%Y-%m-%d'), ' 00:00:00') <= L.INST_DT \n"  : "") + //시작일
 				(SLOG_ENDT!=null && SLOG_ENDT.length() > 0 ? " AND CONCAT(DATE_FORMAT(" + SLOG_ENDT + ", '%Y-%m-%d'), ' 23:59:59') > L.INST_DT \n"  : "") + //종료일
@@ -1896,6 +1930,8 @@ public class DBConnector {
 					JSONObject data = new JSONObject();
 					data.put("LOG_SLOT_IDX",rs.getInt("LOG_SLOT_IDX"));
 					data.put("USER_IDX",rs.getInt("USER_IDX"));
+					data.put("NP_SLOT_TYPE_IDX",rs.getInt("NP_SLOT_TYPE_IDX"));
+					data.put("TYPE_NAME",rs.getString("TYPE_NAME"));
 					data.put("USER_ID",rs.getString("USER_ID"));
 					data.put("INST_ACTN",rs.getString("INST_ACTN"));
 					data.put("SLOT_DAYS",rs.getInt("SLOT_DAYS"));
