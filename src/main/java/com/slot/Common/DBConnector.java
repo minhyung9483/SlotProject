@@ -1985,8 +1985,10 @@ public class DBConnector {
 	}
 
 
-	/*슬롯타입*/
-	public static List<NaverShoppingSlotType> getNaverShoppingSlotType(String USE_YN) {
+	////////////////////////////////////
+	////		TB_NS_SLOT_TYPE		////
+	////////////////////////////////////
+	public static List<NaverShoppingSlotType> getNaverShoppingSlotType(int NS_SLOT_TYPE_IDX, String USE_YN) {
 		Logger.LogOn(false);
 		Connection conn = null;
 		PreparedStatement psmt = null;
@@ -2004,13 +2006,17 @@ public class DBConnector {
 				"FROM TB_NS_SLOT_TYPE ST\n" +
 				"JOIN TB_MEMBER M_IN ON ST.INST_USER = M_IN.USER_IDX\n" +
 				"LEFT JOIN TB_MEMBER M_UP ON ST.UPDT_USER = M_UP.USER_IDX\n" +
-				"WHERE ST.USE_YN = ?";
+				"WHERE 1=1\n" +
+				(USE_YN!=null && USE_YN.length() > 0 ?"AND ST.USE_YN = ?" : "") +
+				(NS_SLOT_TYPE_IDX > 0 ? "AND ST.NS_SLOT_TYPE_IDX = '"+NS_SLOT_TYPE_IDX+"' \n" : "") + //한개 구할때
+				"ORDER BY ST.USE_YN DESC, ST.NS_SLOT_TYPE_IDX ASC";
 
 		try {
 			Class.forName(JDBC_DRIVER);
 			conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
 			psmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-			psmt.setString(1, USE_YN);
+			if(USE_YN!=null && USE_YN.length() > 0)
+				psmt.setString(1, USE_YN);
 			ResultSet rs = psmt.executeQuery();
 			rs.last();
 			if (rs.getRow() > 0) {
@@ -2048,7 +2054,92 @@ public class DBConnector {
 		return r;
 	}
 
-	public static List<NaverPlaceSlotType> getNaverPlaceSlotType(String USE_YN) {
+	public static int InsertNaverShoppingSlotType(String TYPE_NAME, String USE_YN, int INST_USER) {
+		Logger.LogOn(false);
+		Connection conn = null;
+		PreparedStatement psmt = null;
+		ResultSet rs = null;
+		String sql = "INSERT INTO TB_NS_SLOT_TYPE(TYPE_NAME, USE_YN, INST_USER, INST_DT) \n" +
+				"VALUES(?, ?, ?, NOW())";
+		int SlotIDX = 0;
+
+		try {
+			Class.forName(JDBC_DRIVER);
+			conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
+			Logger.Debug(TAG, "MySQL Connection");
+			psmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			psmt.setString(1, TYPE_NAME);
+			psmt.setString(2, USE_YN);
+			psmt.setInt(3, INST_USER);
+			psmt.execute();
+
+			rs = psmt.getGeneratedKeys(); // 쿼리 실행 후 생성된 키 값 반환
+			if (rs.next()) {
+				SlotIDX = rs.getInt(1); // 키값 초기화
+			}
+
+			rs.close();
+			psmt.close();
+			conn.close();
+			return SlotIDX;
+		} catch (Exception e) {
+			e.printStackTrace();
+			SlotIDX = -1;
+		} finally {
+			try {
+				if (rs != null)
+					rs.close();
+				if (psmt != null)
+					psmt.close();
+				if (conn != null)
+					conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return SlotIDX;
+	}
+
+	public static boolean UpdateNaverShoppingSlotType(int NS_SLOT_TYPE_IDX, String Key, String Value, int USER_IDX) {
+		Logger.LogOn(false);
+		Connection conn = null;
+		PreparedStatement psmt = null;
+		String sql = "UPDATE TB_NS_SLOT_TYPE SET " + Key + " = ?, UPDT_USER = ?, UPDT_DT = NOW() \n" +
+				"WHERE NS_SLOT_TYPE_IDX = ?";
+
+		try {
+			Class.forName(JDBC_DRIVER);
+			conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
+			Logger.Debug(TAG, "MySQL Connection");
+			psmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+			psmt.setString(1, Value);
+			psmt.setInt(2, USER_IDX);
+			psmt.setInt(3, NS_SLOT_TYPE_IDX);
+			psmt.execute();
+
+			psmt.close();
+			conn.close();
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (psmt != null)
+					psmt.close();
+				if (conn != null)
+					conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return false;
+	}
+
+	////////////////////////////////////
+	////		TB_NP_SLOT_TYPE		////
+	////////////////////////////////////
+
+	public static List<NaverPlaceSlotType> getNaverPlaceSlotType(int NP_SLOT_TYPE_IDX, String USE_YN) {
 		Logger.LogOn(false);
 		Connection conn = null;
 		PreparedStatement psmt = null;
@@ -2066,13 +2157,17 @@ public class DBConnector {
 				"FROM TB_NP_SLOT_TYPE ST\n" +
 				"JOIN TB_MEMBER M_IN ON ST.INST_USER = M_IN.USER_IDX\n" +
 				"LEFT JOIN TB_MEMBER M_UP ON ST.UPDT_USER = M_UP.USER_IDX\n" +
-				"WHERE ST.USE_YN = ?";
+				"WHERE 1=1\n" +
+				(USE_YN!=null && USE_YN.length() > 0 ?"AND ST.USE_YN = ?" : "") +
+				(NP_SLOT_TYPE_IDX > 0 ? "AND ST.NP_SLOT_TYPE_IDX = '"+NP_SLOT_TYPE_IDX+"' \n" : "") + //한개 구할때
+				"ORDER BY ST.USE_YN DESC, ST.NP_SLOT_TYPE_IDX ASC";
 
 		try {
 			Class.forName(JDBC_DRIVER);
 			conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
 			psmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-			psmt.setString(1, USE_YN);
+			if(USE_YN!=null && USE_YN.length() > 0)
+				psmt.setString(1, USE_YN);
 			ResultSet rs = psmt.executeQuery();
 			rs.last();
 			if (rs.getRow() > 0) {
@@ -2108,6 +2203,87 @@ public class DBConnector {
 			}
 		}
 		return r;
+	}
+
+	public static int InsertNaverPlaceSlotType(String TYPE_NAME, String USE_YN, int INST_USER) {
+		Logger.LogOn(false);
+		Connection conn = null;
+		PreparedStatement psmt = null;
+		ResultSet rs = null;
+		String sql = "INSERT INTO TB_NP_SLOT_TYPE(TYPE_NAME, USE_YN, INST_USER, INST_DT) \n" +
+				"VALUES(?, ?, ?, NOW())";
+		int SlotIDX = 0;
+
+		try {
+			Class.forName(JDBC_DRIVER);
+			conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
+			Logger.Debug(TAG, "MySQL Connection");
+			psmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			psmt.setString(1, TYPE_NAME);
+			psmt.setString(2, USE_YN);
+			psmt.setInt(3, INST_USER);
+			psmt.execute();
+
+			rs = psmt.getGeneratedKeys(); // 쿼리 실행 후 생성된 키 값 반환
+			if (rs.next()) {
+				SlotIDX = rs.getInt(1); // 키값 초기화
+			}
+
+			rs.close();
+			psmt.close();
+			conn.close();
+			return SlotIDX;
+		} catch (Exception e) {
+			e.printStackTrace();
+			SlotIDX = -1;
+		} finally {
+			try {
+				if (rs != null)
+					rs.close();
+				if (psmt != null)
+					psmt.close();
+				if (conn != null)
+					conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return SlotIDX;
+	}
+
+	public static boolean UpdateNaverPlaceSlotType(int NP_SLOT_TYPE_IDX, String Key, String Value, int USER_IDX) {
+		Logger.LogOn(false);
+		Connection conn = null;
+		PreparedStatement psmt = null;
+		String sql = "UPDATE TB_NP_SLOT_TYPE SET " + Key + " = ?, UPDT_USER = ?, UPDT_DT = NOW() \n" +
+				"WHERE NP_SLOT_TYPE_IDX = ?";
+
+		try {
+			Class.forName(JDBC_DRIVER);
+			conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
+			Logger.Debug(TAG, "MySQL Connection");
+			psmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+			psmt.setString(1, Value);
+			psmt.setInt(2, USER_IDX);
+			psmt.setInt(3, NP_SLOT_TYPE_IDX);
+			psmt.execute();
+
+			psmt.close();
+			conn.close();
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (psmt != null)
+					psmt.close();
+				if (conn != null)
+					conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return false;
 	}
 
 }

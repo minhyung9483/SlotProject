@@ -53,7 +53,7 @@
 
 	int totalCount  = DBConnector.getNaverShoppingSlotListTotalCount(m_SearchType, m_SearchValue, member.getUSER_PERM(), member.getUSER_IDX());
 	List<NaverShoppingSlot> slotList = DBConnector.getNaverShoppingSlotList(0, setPage - 1, m_SearchType, m_SearchValue, member.getUSER_PERM(), member.getUSER_IDX());
-	List<NaverShoppingSlotType> naverShoppingSlotTypeList = DBConnector.getNaverShoppingSlotType("Y");
+	List<NaverShoppingSlotType> naverShoppingSlotTypeList = DBConnector.getNaverShoppingSlotType(0,"Y");
 	int idx = totalCount;
 %>
 <%

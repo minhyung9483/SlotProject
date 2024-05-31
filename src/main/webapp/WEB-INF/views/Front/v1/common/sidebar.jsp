@@ -141,6 +141,26 @@
 				<%
 					}
 				%>
+				<%
+					if("M".equals(m.getUSER_PERM())){
+				%>
+				<li class="nav-small-cap">
+					<i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+					<span class="hide-menu">관리자</span>
+				</li>
+				<li class="sidebar-item<%if("슬롯타입관리".equals(MENU)){%> selected<%}%>">
+					<a class="sidebar-link justify-content-between" href="/slot-type-manage" aria-expanded="false">
+						<div class="d-flex align-items-center gap-3">
+							<span>
+								<i class="ti ti-pin"></i>
+							</span>
+							<span class="hide-menu">슬롯타입 관리</span>
+						</div>
+					</a>
+				</li>
+				<%
+					}
+				%>
 			</ul>
 		</nav>
 		<!-- End Sidebar navigation -->

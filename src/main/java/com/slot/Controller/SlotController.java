@@ -2,10 +2,7 @@ package com.slot.Controller;
 
 
 import com.slot.Common.*;
-import com.slot.Model.Member;
-import com.slot.Model.NaverPlaceSlot;
-import com.slot.Model.NaverShoppingSlot;
-import com.slot.Model.Slot;
+import com.slot.Model.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -14,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -700,6 +698,115 @@ public class SlotController {
 					jobj.put("result", true);
 					jobj.put("alert", success+"건 확인 완료.");
 					jobj.put("url", URL);
+				}catch(Exception e){ e.printStackTrace(); }
+			}else{
+
+			}
+		}
+		return jobj.toString();
+	}
+
+	/* 슬롯타입 추가 */
+	@RequestMapping(value="/setSlotType", method=RequestMethod.POST)
+	public String SetSlotType(HttpServletRequest Request, HttpServletResponse response, Model model) throws Exception{
+		member = (Member)ContextUtil.getAttrFromSession(Protocol.Json.KEY_MEMBER);
+		if(member!=null) {
+			if(!"M".equals(member.getUSER_PERM())){
+				return "redirect:/login";
+			}
+			String USER_TYPE = Request.getParameter("USER_TYPE_IN");
+
+			if(USER_TYPE.contains("NS")){
+				String TYPE_NAME = Request.getParameter("NS_TYPE_NAME_IN");
+				int SLOT_TYPE_IDX = DBConnector.InsertNaverShoppingSlotType(TYPE_NAME, "Y", member.getUSER_IDX());
+			}else if(USER_TYPE.contains("NP")){
+				String TYPE_NAME = Request.getParameter("NP_TYPE_NAME_IN");
+				int SLOT_TYPE_IDX = DBConnector.InsertNaverPlaceSlotType(TYPE_NAME, "Y", member.getUSER_IDX());
+			}
+			return "redirect:/slot-type-manage";
+		}
+		return "redirect:/login";
+	}
+
+	/* 슬롯타입 수정 */
+	@RequestMapping(value="/setSlotType/{SLOT_TYPE_IDX}", method=RequestMethod.POST)
+	public String SetSlotTypeIdx(@PathVariable("SLOT_TYPE_IDX") int SLOT_TYPE_IDX, HttpServletRequest Request, Model model) throws Exception{
+		member = (Member)ContextUtil.getAttrFromSession(Protocol.Json.KEY_MEMBER);
+		if(member!=null) {
+			if(!"M".equals(member.getUSER_PERM())){
+				return "redirect:/login";
+			}
+			String USER_TYPE = Request.getParameter("USER_TYPE_UP");
+
+			if(USER_TYPE.contains("NS")){
+				NaverShoppingSlotType st = DBConnector.getNaverShoppingSlotType(SLOT_TYPE_IDX,"Y").get(0);
+				if(st != null){
+					String TYPE_NAME = Request.getParameter("NS_TYPE_NAME_UP");
+					DBConnector.UpdateNaverShoppingSlotType(SLOT_TYPE_IDX, "TYPE_NAME", TYPE_NAME, member.getUSER_IDX());
+				}
+			}else if(USER_TYPE.contains("NP")){
+				NaverPlaceSlotType st = DBConnector.getNaverPlaceSlotType(SLOT_TYPE_IDX,"Y").get(0);
+				if(st != null){
+					String TYPE_NAME = Request.getParameter("NP_TYPE_NAME_UP");
+					DBConnector.UpdateNaverPlaceSlotType(SLOT_TYPE_IDX, "TYPE_NAME", TYPE_NAME, member.getUSER_IDX());
+				}
+			}
+			return "redirect:/slot-type-manage";
+		}
+		return "redirect:/login";
+	}
+
+	/* 슬롯타입 삭제 */
+	@ResponseBody
+	@RequestMapping(value="/deleteSlotType", method=RequestMethod.POST, produces = "application/text; charset=UTF-8")
+	public String DeleteNaverShoppingSlotType(@RequestParam HashMap<String, String> param) {
+		JSONObject jobj = new JSONObject();
+		jobj.put("code", "200");
+		jobj.put("result", false);
+		jobj.put("value", "");
+		jobj.put("alert", "삭제 실패.");
+		jobj.put("url", "");
+		member = (Member)ContextUtil.getAttrFromSession(Protocol.Json.KEY_MEMBER);
+		if(member!=null) {
+			if(!"M".equals(member.getUSER_PERM())){
+				return jobj.toString();
+			}
+
+			if(param!=null && param.size() > 0) {
+				try {
+					JSONArray responseArray = new JSONArray();
+
+					JSONObject jParamObject = (JSONObject)JSONValue.parse(param.get("PARAM"));
+
+					int SLOT_TYPE_IDX = Integer.parseInt((String) jParamObject.get("SLOT_TYPE_IDX"));
+					String USER_TYPE = (String) jParamObject.get("USER_TYPE");
+
+					if(USER_TYPE.contains("NS")){
+						jParamObject.put("RESULT", "X");
+
+						if (DBConnector.UpdateNaverShoppingSlotType(SLOT_TYPE_IDX, "USE_YN", "N", member.getUSER_IDX())) {
+							jParamObject.put("RESULT", "O");
+							jParamObject.put("MSG", "");
+						} else {
+							jParamObject.put("MSG", "DB error");
+						}
+						
+						responseArray.add(jParamObject);
+					}else if(USER_TYPE.contains("NP")){
+						jParamObject.put("RESULT", "X");
+
+						if (DBConnector.UpdateNaverPlaceSlotType(SLOT_TYPE_IDX, "USE_YN", "N", member.getUSER_IDX())) {
+							jParamObject.put("RESULT", "O");
+							jParamObject.put("MSG", "");
+						} else {
+							jParamObject.put("MSG", "DB error");
+						}
+
+						responseArray.add(jParamObject);
+					}
+					jobj.put("value", responseArray);
+					jobj.put("result", true);
+					jobj.put("alert", "삭제 완료.");
 				}catch(Exception e){ e.printStackTrace(); }
 			}else{
 

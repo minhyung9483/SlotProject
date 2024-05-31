@@ -53,7 +53,7 @@
 
 	int totalCount  = DBConnector.getNaverPlaceSlotListTotalCount(m_SearchType, m_SearchValue, member.getUSER_PERM(), member.getUSER_IDX());
 	List<NaverPlaceSlot> slotList = DBConnector.getNaverPlaceSlotList(0, setPage - 1, m_SearchType, m_SearchValue, member.getUSER_PERM(), member.getUSER_IDX());
-	List<NaverPlaceSlotType> naverPlaceSlotTypeList = DBConnector.getNaverPlaceSlotType("Y");
+	List<NaverPlaceSlotType> naverPlaceSlotTypeList = DBConnector.getNaverPlaceSlotType(0,"Y");
 	int idx = totalCount;
 %>
 <%

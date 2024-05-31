@@ -308,4 +308,16 @@ public class PageMoveController {
 		return "redirect:/login";
 	}
 
+	@RequestMapping("/slot-type-manage")
+	public String SlotTypeManage(HttpServletRequest request, Model model) {
+		member = (Member) ContextUtil.getAttrFromSession(Protocol.Json.KEY_MEMBER);
+
+		if(member!=null&&"M".equals(member.getUSER_PERM())) {
+			model.addAttribute("MENU","슬롯타입관리");
+			return "Front/v1/slot-type-manage";
+		}
+
+		return "redirect:/login";
+	}
+
 }

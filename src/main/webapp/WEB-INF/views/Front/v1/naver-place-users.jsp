@@ -51,7 +51,7 @@
 
 	int idx = totalCount;
 
-	List<NaverPlaceSlotType> naverPlaceSlotTypeList = DBConnector.getNaverPlaceSlotType("Y");
+	List<NaverPlaceSlotType> naverPlaceSlotTypeList = DBConnector.getNaverPlaceSlotType(0,"Y");
 //		int totalCount  = "ADMN".equals(member.getPART_CODE()) ? DBConnector.getQuestionDataTotalCount(null, null, null) : DBConnector.getQuestionDataTotalCount(null, null, member.getUSER_IDX());
 //		List<Member> memberList = "ADMN".equals(member.getPART_CODE()) ? DBConnector.getQuestionDataList(0, setPage - 1, null, null, null) : DBConnector.getQuestionDataList(0, setPage - 1, null, null, member.getUSER_IDX());
 %>
@@ -144,11 +144,11 @@
 								<h5 class="card-title fw-semibold mb-4">네이버 플레이스<%=totalCount>0?"("+totalCount+")":""%></h5>
 							</div>
 							<div class="col-lg-8 text-end">
-								<button type="button" class="btn btn-primary mb-1" data-bs-toggle="modal" data-bs-target="#insertModal" data-bs-inidx="<%=member.getUSER_IDX()%>">
+								<button type="button" class="btn btn-outline-primary mb-1" data-bs-toggle="modal" data-bs-target="#insertModal" data-bs-inidx="<%=member.getUSER_IDX()%>">
 									유저 추가
 								</button>
 								<%if(memberList.size()>0 && "M".equals(member.getUSER_PERM())){%>
-								<button type="button" class="btn btn-primary ms-2 mb-1" onclick="setDelete()">
+								<button type="button" class="btn btn-outline-primary ms-2 mb-1" onclick="setDelete()">
 									삭제
 								</button>
 								<%}%>
