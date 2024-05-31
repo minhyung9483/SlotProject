@@ -39,20 +39,22 @@
 	Member member = (Member) session.getAttribute(Protocol.Json.KEY_MEMBER);
 
 	int setPage = 1;
-	String m_SearchType = "", m_SearchValue = "", Param = "";
+	String m_SearchType = "", m_SearchValue = "", m_OrderType = "", Param = "";
 
 	try{ m_SearchType =  (String)request.getAttribute("SearchType"); 			}catch(Exception e){ e.printStackTrace(); }
 	try{ m_SearchValue = (String)request.getAttribute("SearchValue"); 			}catch(Exception e){ e.printStackTrace(); }
+	try{ m_OrderType = (String)request.getAttribute("OrderType"); 			}catch(Exception e){ e.printStackTrace(); }
 
 	Param += m_SearchType!=null && m_SearchType.length() > 0 ? "st=" + m_SearchType+"&" : "";
 	Param += m_SearchValue!=null && m_SearchValue.length() > 0 ? "sv=" + m_SearchValue+"&" : "";
+	Param += m_OrderType!=null && m_OrderType.length() > 0 ? "or=" + m_OrderType+"&" : "";
 	Param = Param!=null && Param.length() > 0 ? "?" +Param : "";
 
 	try{ setPage = Integer.parseInt( (String)request.getAttribute("page")); 	}catch(Exception e){ }
 
 
 	int totalCount  = DBConnector.getNaverShoppingSlotListTotalCount(m_SearchType, m_SearchValue, member.getUSER_PERM(), member.getUSER_IDX());
-	List<NaverShoppingSlot> slotList = DBConnector.getNaverShoppingSlotList(0, setPage - 1, m_SearchType, m_SearchValue, member.getUSER_PERM(), member.getUSER_IDX());
+	List<NaverShoppingSlot> slotList = DBConnector.getNaverShoppingSlotList(0, setPage - 1, m_SearchType, m_SearchValue, m_OrderType, member.getUSER_PERM(), member.getUSER_IDX());
 	List<NaverShoppingSlotType> naverShoppingSlotTypeList = DBConnector.getNaverShoppingSlotType(0,"Y");
 	int idx = totalCount;
 %>
@@ -76,6 +78,7 @@
 		let formData = new FormData();
 		formData.append("st", document.getElementById("searchType").value);
 		formData.append("sv", document.getElementById("searchValue").value);
+		formData.append("or", document.getElementById("orderType").value);
 		$.ajax({
 			url: '/naverShoppingSearchSlot/1',
 			type: "POST",
@@ -146,7 +149,7 @@
 							<div class="col-lg-4">
 								<h5 class="card-title fw-semibold mb-4 col-lg-12">네이버 쇼핑<%=totalCount>0?"("+totalCount+")":""%></h5>
 							</div>
-							<div class="col-lg-8 text-end">
+							<div class="col-lg-7 text-end">
 								<%if("M".equals(member.getUSER_PERM())){%>
 								<button type="button" class="btn btn-outline-primary ms-2 mb-1" id="uploadBtn">
 									대량등록
@@ -172,6 +175,12 @@
 								</button>
 								<%}%>
 								<%}%>
+							</div>
+							<div class="col-lg-1">
+								<select class="form-select" id="orderType" name="orderType" onchange="javascript:changeQuery()">
+									<option value="SLOT_IDX" <%="SLOT_IDX".equals(m_OrderType) ? "selected" : ""%>>등록순</option>
+									<option value="SLOT_ENDT" <%="SLOT_ENDT".equals(m_OrderType) ? "selected" : ""%>>종료일순</option>
+								</select>
 							</div>
 						</div>
 
@@ -285,7 +294,7 @@
 									<%}%>
 									<form id="updateNewForm<%=slotList.get(i).getSLOT_IDX()%>" name="updateNewForm">
 									<td class=""><%--번호--%>
-										<input type="text" class="form-control-plaintext text-center" value="<%=idx-- - (setPage-1)*10%>" readonly>
+										<input type="text" class="form-control-plaintext text-center" value="<%=idx-- - (setPage-1)*100%>" readonly>
 										<input type="hidden" id="IDX_<%=slotList.get(i).getSLOT_IDX()%>" name="IDX_<%=slotList.get(i).getSLOT_IDX()%>"  value="<%=slotList.get(i).getSLOT_IDX()%>" readonly>
 										<input type="hidden" id="PAGE_<%=slotList.get(i).getSLOT_IDX()%>" name="PAGE_<%=slotList.get(i).getSLOT_IDX()%>" value="<%=setPage%>">
 										<input type="hidden" id="PARAM_<%=slotList.get(i).getSLOT_IDX()%>" name="PARAM_<%=slotList.get(i).getSLOT_IDX()%>" value="<%=Param%>">
@@ -339,7 +348,7 @@
 			<%-- 페이징 --%>
 			<%
 				int displayPageNum = 10;
-				int perPageNum = 10;
+				int perPageNum = 100;
 				int endPage = (int) (Math.ceil(setPage / (double) displayPageNum) * displayPageNum);
 				int startPage = (endPage - displayPageNum) + 1;
 				int tempEndPage = (int) (Math.ceil(totalCount / (double) perPageNum));

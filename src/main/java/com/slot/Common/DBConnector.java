@@ -365,7 +365,7 @@ public class DBConnector {
 					//(USER_TYPE!=null && USER_TYPE.length() > 0? "AND (M.USER_TYPE = '"+USER_TYPE+"') \n" : "") + //유저타입
 					(USER_TYPE!=null && USER_TYPE.length() > 0? "AND (M.USER_TYPE LIKE '%"+USER_TYPE+"%') \n" : "") + //유저타입
 					(SearchType!=null && SearchType.length() > 0 && SearchData!=null && SearchData.length() > 0 ? " AND M." + SearchType + " LIKE '%" + SearchData + "%'"  : "") +
-					"ORDER BY M.USER_IDX DESC LIMIT ?, 10";
+					"ORDER BY M.USER_IDX DESC LIMIT ?, 100";
 		}else if(USER_TYPE.contains("NP")){
 			sql = "SELECT\n" +
 					"M.USER_IDX,\n" +
@@ -397,14 +397,14 @@ public class DBConnector {
 					//(USER_TYPE!=null && USER_TYPE.length() > 0? "AND (M.USER_TYPE = '"+USER_TYPE+"') \n" : "") + //유저타입
 					(USER_TYPE!=null && USER_TYPE.length() > 0? "AND (M.USER_TYPE LIKE '%"+USER_TYPE+"%') \n" : "") + //유저타입
 					(SearchType!=null && SearchType.length() > 0 && SearchData!=null && SearchData.length() > 0 ? " AND M." + SearchType + " LIKE '%" + SearchData + "%'"  : "") +
-					"ORDER BY M.USER_IDX DESC LIMIT ?, 10";
+					"ORDER BY M.USER_IDX DESC LIMIT ?, 100";
 		}
 
 		try {
 			Class.forName(JDBC_DRIVER);
 			conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
 			psmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-			psmt.setInt(1, Page * 10);
+			psmt.setInt(1, Page * 100);
 
 			Logger.Debug(TAG, "QUERY: "+psmt);
 			ResultSet rs = psmt.executeQuery();
@@ -716,7 +716,7 @@ public class DBConnector {
 		return result;
 	}
 
-	public static List<NaverShoppingSlot> getNaverShoppingSlotList(int SLOT_IDX, int Page, String SearchType, String SearchData, String USER_PERM, int USER_IDX) {
+	public static List<NaverShoppingSlot> getNaverShoppingSlotList(int SLOT_IDX, int Page, String SearchType, String SearchData, String OrderType, String USER_PERM, int USER_IDX) {
 		Logger.LogOn(false);
 		Connection conn = null;
 		PreparedStatement psmt = null;
@@ -762,13 +762,14 @@ public class DBConnector {
 				(SearchType!=null && SearchType.length() > 0 && SearchData!=null && SearchData.length() > 0 ? " AND " + SearchType + " LIKE '%" + SearchData + "%'"  : "") + //검색
 				("S".equals(USER_PERM) && USER_IDX > 0 ? "AND S.USER_IDX = '"+USER_IDX+"' \n" : "") + //셀러일때
 				("G".equals(USER_PERM) && USER_IDX > 0 ? "AND (S.USER_IDX = '"+USER_IDX+"' OR M.INST_ADMN = '"+USER_IDX+"') \n" : "") + //총판일때
-				"ORDER BY S.SLOT_IDX DESC LIMIT ?, 10";
+				(OrderType!=null && OrderType.length() > 0 ? ("SLOT_IDX".equals(OrderType) ? "ORDER BY S.SLOT_IDX DESC \n" : "ORDER BY S.SLOT_ENDT ASC \n") : "ORDER BY S.SLOT_IDX DESC \n") +
+				"LIMIT ?, 100";
 
 		try {
 			Class.forName(JDBC_DRIVER);
 			conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
 			psmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-			psmt.setInt(1, Page * 10);
+			psmt.setInt(1, Page * 100);
 
 			Logger.Debug(TAG, "QUERY: "+psmt);
 			ResultSet rs = psmt.executeQuery();
@@ -1148,13 +1149,13 @@ public class DBConnector {
 				(SearchType!=null && SearchType.length() > 0 && SearchData!=null && SearchData.length() > 0 ? " AND " + SearchType + " LIKE '%" + SearchData + "%'"  : "") + //검색
 				("S".equals(USER_PERM) && USER_IDX > 0 ? "AND S.USER_IDX = '"+USER_IDX+"' \n" : "") + //셀러일때
 				("G".equals(USER_PERM) && USER_IDX > 0 ? "AND (S.USER_IDX = '"+USER_IDX+"' OR M.INST_ADMN = '"+USER_IDX+"') \n" : "") + //총판일때
-				"ORDER BY L.LOG_SLOT_IDX DESC LIMIT ?, 10";
+				"ORDER BY L.LOG_SLOT_IDX DESC LIMIT ?, 100";
 
 		try {
 			Class.forName(JDBC_DRIVER);
 			conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
 			psmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-			psmt.setInt(1, Page * 10);
+			psmt.setInt(1, Page * 100);
 
 			Logger.Debug(TAG, "QUERY: "+psmt);
 			ResultSet rs = psmt.executeQuery();
@@ -1381,7 +1382,7 @@ public class DBConnector {
 		return result;
 	}
 
-	public static List<NaverPlaceSlot> getNaverPlaceSlotList(int SLOT_IDX, int Page, String SearchType, String SearchData, String USER_PERM, int USER_IDX) {
+	public static List<NaverPlaceSlot> getNaverPlaceSlotList(int SLOT_IDX, int Page, String SearchType, String SearchData, String OrderType, String USER_PERM, int USER_IDX) {
 		Logger.LogOn(false);
 		Connection conn = null;
 		PreparedStatement psmt = null;
@@ -1427,13 +1428,14 @@ public class DBConnector {
 				(SearchType!=null && SearchType.length() > 0 && SearchData!=null && SearchData.length() > 0 ? " AND " + SearchType + " LIKE '%" + SearchData + "%'"  : "") + //검색
 				("S".equals(USER_PERM) && USER_IDX > 0 ? "AND S.USER_IDX = '"+USER_IDX+"' \n" : "") + //셀러일때
 				("G".equals(USER_PERM) && USER_IDX > 0 ? "AND (S.USER_IDX = '"+USER_IDX+"' OR M.INST_ADMN = '"+USER_IDX+"') \n" : "") + //총판일때
-				"ORDER BY S.SLOT_IDX DESC LIMIT ?, 10";
+				(OrderType!=null && OrderType.length() > 0 ? ("SLOT_IDX".equals(OrderType) ? "ORDER BY S.SLOT_IDX DESC \n" : "ORDER BY S.SLOT_ENDT ASC \n") : "ORDER BY S.SLOT_IDX DESC \n") +
+				"LIMIT ?, 100";
 
 		try {
 			Class.forName(JDBC_DRIVER);
 			conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
 			psmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-			psmt.setInt(1, Page * 10);
+			psmt.setInt(1, Page * 100);
 
 			Logger.Debug(TAG, "QUERY: "+psmt);
 			ResultSet rs = psmt.executeQuery();
@@ -1813,13 +1815,13 @@ public class DBConnector {
 				(SearchType!=null && SearchType.length() > 0 && SearchData!=null && SearchData.length() > 0 ? " AND " + SearchType + " LIKE '%" + SearchData + "%'"  : "") + //검색
 				("S".equals(USER_PERM) && USER_IDX > 0 ? "AND S.USER_IDX = '"+USER_IDX+"' \n" : "") + //셀러일때
 				("G".equals(USER_PERM) && USER_IDX > 0 ? "AND (S.USER_IDX = '"+USER_IDX+"' OR M.INST_ADMN = '"+USER_IDX+"') \n" : "") + //총판일때
-				"ORDER BY L.LOG_SLOT_IDX DESC LIMIT ?, 10";
+				"ORDER BY L.LOG_SLOT_IDX DESC LIMIT ?, 100";
 
 		try {
 			Class.forName(JDBC_DRIVER);
 			conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
 			psmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-			psmt.setInt(1, Page * 10);
+			psmt.setInt(1, Page * 100);
 
 			Logger.Debug(TAG, "QUERY: "+psmt);
 			ResultSet rs = psmt.executeQuery();

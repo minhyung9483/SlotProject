@@ -409,7 +409,7 @@
 
 								<tr>
 									<td class="">
-										<input type="text" class="form-control-plaintext text-center" value="<%=idx-- - (setPage-1)*10%>" readonly>
+										<input type="text" class="form-control-plaintext text-center" value="<%=idx-- - (setPage-1)*100%>" readonly>
 									</td>
 									<td class="">
 										<input type="text" class="form-control-plaintext text-center" id="ID_<%=logSlotList.get(i).getLOG_SLOT_IDX()%>" name="ID_<%=logSlotList.get(i).getLOG_SLOT_IDX()%>" value="<%=logSlotList.get(i).getUSER_ID()%>" title="<%=logSlotList.get(i).getUSER_ID()%>" readonly>
@@ -455,7 +455,7 @@
 			<%-- 페이징 --%>
 			<%
 				int displayPageNum = 10;
-				int perPageNum = 10;
+				int perPageNum = 100;
 				int endPage = (int) (Math.ceil(setPage / (double) displayPageNum) * displayPageNum);
 				int startPage = (endPage - displayPageNum) + 1;
 				int tempEndPage = (int) (Math.ceil(totalCount / (double) perPageNum));

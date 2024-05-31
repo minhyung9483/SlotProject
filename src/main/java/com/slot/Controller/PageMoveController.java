@@ -80,9 +80,11 @@ public class PageMoveController {
 			try {
 				String SearchType = Request.getParameter("st");
 				String SearchValue = Request.getParameter("sv");
+				String OrderType = Request.getParameter("or");
 
 				model.addAttribute("SearchType",SearchType!=null ? SearchType : "");
 				model.addAttribute("SearchValue",SearchValue!=null ? SearchValue : "");
+				model.addAttribute("OrderType",OrderType!=null ? OrderType : "");
 				model.addAttribute("page", Page);
 			}catch(Exception e){ e.printStackTrace(); }
 
@@ -112,9 +114,11 @@ public class PageMoveController {
 			try {
 				String SearchType = Request.getParameter("st");
 				String SearchValue = Request.getParameter("sv");
+				String OrderType = Request.getParameter("or");
 
 				model.addAttribute("SearchType",SearchType!=null ? SearchType : "");
 				model.addAttribute("SearchValue",SearchValue!=null ? SearchValue : "");
+				model.addAttribute("OrderType",OrderType!=null ? OrderType : "");
 				model.addAttribute("page", Page);
 			}catch(Exception e){ e.printStackTrace(); }
 

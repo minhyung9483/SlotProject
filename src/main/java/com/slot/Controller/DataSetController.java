@@ -171,9 +171,11 @@ public class DataSetController {
 			try {
 				String SearchType = Request.getParameter("st");
 				String SearchValue = Request.getParameter("sv");
+				String OrderType = Request.getParameter("or");
 				return "/naver-shopping-slots/"+Page+"?" +
 						(SearchType!=null && SearchType.length() > 0 ? "st=" + SearchType +"&" : "") +
-						(SearchValue!=null && SearchValue.length() > 0 ? "sv=" + SearchValue : "");
+						(SearchValue!=null && SearchValue.length() > 0 ? "sv=" + SearchValue +"&" : "") +
+						(OrderType!=null && OrderType.length() > 0 ? "or=" + OrderType : "");
 			}catch(Exception e){ e.printStackTrace(); }
 		}
 		return "redirect:/Login";
@@ -187,9 +189,11 @@ public class DataSetController {
 			try {
 				String SearchType = Request.getParameter("st");
 				String SearchValue = Request.getParameter("sv");
+				String OrderType = Request.getParameter("or");
 				return "/naver-place-slots/"+Page+"?" +
 						(SearchType!=null && SearchType.length() > 0 ? "st=" + SearchType +"&" : "") +
-						(SearchValue!=null && SearchValue.length() > 0 ? "sv=" + SearchValue : "");
+						(SearchValue!=null && SearchValue.length() > 0 ? "sv=" + SearchValue +"&" : "") +
+						(OrderType!=null && OrderType.length() > 0 ? "or=" + OrderType : "");
 			}catch(Exception e){ e.printStackTrace(); }
 		}
 		return "redirect:/Login";

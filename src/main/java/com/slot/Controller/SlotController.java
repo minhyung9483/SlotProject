@@ -113,7 +113,7 @@ public class SlotController {
 				return "redirect:/naver-shopping-slots";
 			}
 
-			NaverShoppingSlot s = DBConnector.getNaverShoppingSlotList(SlotIdx , 0, null, null, member.getUSER_PERM(), member.getUSER_IDX()).get(0);
+			NaverShoppingSlot s = DBConnector.getNaverShoppingSlotList(SlotIdx , 0, null, null, null, member.getUSER_PERM(), member.getUSER_IDX()).get(0);
 			Member m = DBConnector.getMemberList(UserIdx , 0, null, null, member.getUSER_PERM(), null, member.getUSER_IDX()).get(0);
 			if("M".equals(member.getUSER_PERM()) || ("G".equals(member.getUSER_PERM()) && (m.getINST_ADMN_IDX() == member.getUSER_IDX() || s.getUSER_IDX() == member.getUSER_IDX())) || s.getUSER_IDX() == member.getUSER_IDX()){
 //			if("M".equals(member.getUSER_PERM()) || ("G".equals(member.getUSER_PERM()) && (m.getINST_ADMN_IDX() == member.getUSER_IDX() || m.getUSER_IDX() == member.getUSER_IDX())) || s.getUSER_IDX() == member.getUSER_IDX()){
@@ -187,7 +187,7 @@ public class SlotController {
 					}
 
 					if(USER_TYPE.contains("NS")){
-						NaverShoppingSlot s = DBConnector.getNaverShoppingSlotList(SlotIdx , 0, null, null, member.getUSER_PERM(), member.getUSER_IDX()).get(0);
+						NaverShoppingSlot s = DBConnector.getNaverShoppingSlotList(SlotIdx , 0, null, null, null, member.getUSER_PERM(), member.getUSER_IDX()).get(0);
 						Member m = DBConnector.getMemberList(UserIdx , 0, null, null, member.getUSER_PERM(), USER_TYPE, member.getUSER_IDX()).get(0);
 
 						jParamObject.put("RESULT", "X");
@@ -211,7 +211,7 @@ public class SlotController {
 						}
 						responseArray.add(jParamObject);
 					}else if(USER_TYPE.contains("NP")){
-						NaverPlaceSlot s = DBConnector.getNaverPlaceSlotList(SlotIdx , 0, null, null, member.getUSER_PERM(), member.getUSER_IDX()).get(0);
+						NaverPlaceSlot s = DBConnector.getNaverPlaceSlotList(SlotIdx , 0, null, null, null, member.getUSER_PERM(), member.getUSER_IDX()).get(0);
 						Member m = DBConnector.getMemberList(UserIdx , 0, null, null, member.getUSER_PERM(), USER_TYPE, member.getUSER_IDX()).get(0);
 
 						jParamObject.put("RESULT", "X");
@@ -290,7 +290,7 @@ public class SlotController {
 
 //						Member user = DBConnector.getMemberByIdx(jParamObject.get("USER_IDX")!=null?jParamObject.get("USER_IDX").toString():"");
 
-						NaverShoppingSlot s = DBConnector.getNaverShoppingSlotList(SlotIdx , 0, null, null, member.getUSER_PERM(), member.getUSER_IDX()).get(0);
+						NaverShoppingSlot s = DBConnector.getNaverShoppingSlotList(SlotIdx , 0, null, null, null, member.getUSER_PERM(), member.getUSER_IDX()).get(0);
 						Member m = DBConnector.getMemberList(UserIdx , 0, null, null, member.getUSER_PERM(), null, member.getUSER_IDX()).get(0);
 
 						jParamObject.put("RESULT", "X");
@@ -374,7 +374,7 @@ public class SlotController {
 						if(USER_TYPE.contains("NS")){
 							Member user = DBConnector.getMemberByIdx(jParamObject.get("USER_IDX")!=null?jParamObject.get("USER_IDX").toString():"");
 
-							NaverShoppingSlot s = DBConnector.getNaverShoppingSlotList(SlotIdx , 0, null, null, member.getUSER_PERM(), member.getUSER_IDX()).get(0);
+							NaverShoppingSlot s = DBConnector.getNaverShoppingSlotList(SlotIdx , 0, null, null, null, member.getUSER_PERM(), member.getUSER_IDX()).get(0);
 							Member m = DBConnector.getMemberList(UserIdx , 0, null, null, member.getUSER_PERM(), USER_TYPE, member.getUSER_IDX()).get(0);
 
 							jParamObject.put("RESULT", "X");
@@ -418,7 +418,7 @@ public class SlotController {
 						}else if(USER_TYPE.contains("NP")){
 							Member user = DBConnector.getMemberByIdx(jParamObject.get("USER_IDX")!=null?jParamObject.get("USER_IDX").toString():"");
 
-							NaverPlaceSlot s = DBConnector.getNaverPlaceSlotList(SlotIdx , 0, null, null, member.getUSER_PERM(), member.getUSER_IDX()).get(0);
+							NaverPlaceSlot s = DBConnector.getNaverPlaceSlotList(SlotIdx , 0, null, null, null, member.getUSER_PERM(), member.getUSER_IDX()).get(0);
 							Member m = DBConnector.getMemberList(UserIdx , 0, null, null, member.getUSER_PERM(), USER_TYPE, member.getUSER_IDX()).get(0);
 
 							jParamObject.put("RESULT", "X");
@@ -520,7 +520,7 @@ public class SlotController {
 
 //						Member user = DBConnector.getMemberByIdx(jParamObject.get("USER_IDX")!=null?jParamObject.get("USER_IDX").toString():"");
 
-							NaverShoppingSlot s = DBConnector.getNaverShoppingSlotList(SlotIdx , 0, null, null, member.getUSER_PERM(), member.getUSER_IDX()).get(0);
+							NaverShoppingSlot s = DBConnector.getNaverShoppingSlotList(SlotIdx , 0, null, null, null, member.getUSER_PERM(), member.getUSER_IDX()).get(0);
 							Member m = DBConnector.getMemberList(UserIdx , 0, null, null, member.getUSER_PERM(), USER_TYPE, member.getUSER_IDX()).get(0);
 							jParamObject.put("RESULT", "X");
 							if("M".equals(member.getUSER_PERM()) || ("G".equals(member.getUSER_PERM()) && (m.getINST_ADMN_IDX() == member.getUSER_IDX() || s.getUSER_IDX() == member.getUSER_IDX()))){
@@ -555,7 +555,7 @@ public class SlotController {
 
 //						Member user = DBConnector.getMemberByIdx(jParamObject.get("USER_IDX")!=null?jParamObject.get("USER_IDX").toString():"");
 
-							NaverPlaceSlot s = DBConnector.getNaverPlaceSlotList(SlotIdx , 0, null, null, member.getUSER_PERM(), member.getUSER_IDX()).get(0);
+							NaverPlaceSlot s = DBConnector.getNaverPlaceSlotList(SlotIdx , 0, null, null, null, member.getUSER_PERM(), member.getUSER_IDX()).get(0);
 							Member m = DBConnector.getMemberList(UserIdx , 0, null, null, member.getUSER_PERM(), USER_TYPE, member.getUSER_IDX()).get(0);
 							jParamObject.put("RESULT", "X");
 							if("M".equals(member.getUSER_PERM()) || ("G".equals(member.getUSER_PERM()) && (m.getINST_ADMN_IDX() == member.getUSER_IDX() || s.getUSER_IDX() == member.getUSER_IDX()))){
@@ -646,7 +646,7 @@ public class SlotController {
 						if(USER_TYPE.contains("NS")){
 							//						Member user = DBConnector.getMemberByIdx(jParamObject.get("USER_IDX")!=null?jParamObject.get("USER_IDX").toString():"");
 
-							NaverShoppingSlot s = DBConnector.getNaverShoppingSlotList(SlotIdx , 0, null, null, member.getUSER_PERM(), member.getUSER_IDX()).get(0);
+							NaverShoppingSlot s = DBConnector.getNaverShoppingSlotList(SlotIdx , 0, null, null, null, member.getUSER_PERM(), member.getUSER_IDX()).get(0);
 							Member m = DBConnector.getMemberList(UserIdx , 0, null, null, member.getUSER_PERM(), USER_TYPE, member.getUSER_IDX()).get(0);
 
 							jParamObject.put("RESULT", "X");
@@ -670,7 +670,7 @@ public class SlotController {
 						}else if(USER_TYPE.contains("NP")){
 							//						Member user = DBConnector.getMemberByIdx(jParamObject.get("USER_IDX")!=null?jParamObject.get("USER_IDX").toString():"");
 
-							NaverPlaceSlot s = DBConnector.getNaverPlaceSlotList(SlotIdx , 0, null, null, member.getUSER_PERM(), member.getUSER_IDX()).get(0);
+							NaverPlaceSlot s = DBConnector.getNaverPlaceSlotList(SlotIdx , 0, null, null, null, member.getUSER_PERM(), member.getUSER_IDX()).get(0);
 							Member m = DBConnector.getMemberList(UserIdx , 0, null, null, member.getUSER_PERM(), USER_TYPE, member.getUSER_IDX()).get(0);
 
 							jParamObject.put("RESULT", "X");
