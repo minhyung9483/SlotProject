@@ -150,18 +150,18 @@
 								<h5 class="card-title fw-semibold mb-4 col-lg-12">네이버 쇼핑<%=totalCount>0?"("+totalCount+")":""%></h5>
 							</div>
 							<div class="col-lg-7 text-end">
-								<%if("M".equals(member.getUSER_PERM())){%>
+								<%--<%if("M".equals(member.getUSER_PERM())){%>
 								<button type="button" class="btn btn-outline-primary ms-2 mb-1" id="uploadBtn">
 									대량등록
 								</button>
-								<%}%>
+								<%}%>--%>
 								<%if(slotList.size()>0){%>
-								<%--<button type="button" class="btn btn-outline-primary mb-1" id="updatesBtn" &lt;%&ndash;data-bs-toggle="modal" data-bs-target="#updatesModal"&ndash;%&gt;>
-									수정
-								</button>--%>
 								<%if("M".equals(member.getUSER_PERM())){%>
 								<button type="button" class="btn btn-outline-primary ms-2 mb-1" onclick="setStatus()">
 									선택확인
+								</button>
+								<button type="button" class="btn btn-outline-primary ms-2 mb-1" onclick="setDelete()">
+									선택삭제
 								</button>
 								<%}%>
 								<%if("M".equals(member.getUSER_PERM()) || "G".equals(member.getUSER_PERM())){%>
@@ -169,11 +169,9 @@
 									선택연장
 								</button>
 								<%}%>
-								<%if("M".equals(member.getUSER_PERM())){%>
-								<button type="button" class="btn btn-outline-primary ms-2 mb-1" onclick="setDelete()">
-									선택삭제
+								<button type="button" class="btn btn-outline-primary ms-2 mb-1" onclick="setUpdates()">
+									선택수정
 								</button>
-								<%}%>
 								<%}%>
 							</div>
 							<div class="col-lg-1">
@@ -206,21 +204,9 @@
 									<col width="11%">
 									<col width="11%">
 									<col width="5%">
-									<%}else if("G".equals(member.getUSER_PERM())){%>
+									<%}else{%>
 									<col width="2.5%">
 									<col width="5%">
-									<col width="11%">
-									<col width="11%">
-
-									<col width="11%">
-									<col width="11%">
-									<col width="11%">
-									<col width="11%">
-									<col width="11%">
-									<col width="11%">
-									<col width="5%">
-									<%}else{%>
-									<col width="7.5%">
 									<col width="11%">
 									<col width="11%">
 
@@ -235,11 +221,9 @@
 								</colgroup>
 								<thead class="text-dark fs-4 text-center bg-light-gray border-top">
 								<tr>
-									<%if("M".equals(member.getUSER_PERM()) || "G".equals(member.getUSER_PERM())){%>
 									<th class=" align-middle">
 										<input type="checkbox" class="form-check-input" id="slotListAll" name="slotList" onclick="checkAll(this, 'slotList')">
 									</th>
-									<%}%>
 									<%
 										//////////////////////////////////////
 										//////		Title Setting		//////
@@ -287,11 +271,9 @@
 								%>
 
 								<tr>
-									<%if("M".equals(member.getUSER_PERM()) || "G".equals(member.getUSER_PERM())){%>
 									<td class=""><%--체크박스--%>
 										<input type="checkbox" class="form-check-input" id="slotList<%=i%>" name="slotList" value="<%=slotList.get(i).getUSER_IDX()%>_<%=slotList.get(i).getSLOT_IDX()%>">
 									</td>
-									<%}%>
 									<form id="updateNewForm<%=slotList.get(i).getSLOT_IDX()%>" name="updateNewForm">
 									<td class=""><%--번호--%>
 										<input type="text" class="form-control-plaintext text-center" value="<%=idx-- - (setPage-1)*100%>" readonly>
@@ -776,10 +758,14 @@
 		});
 	}
 
-	/*function setUpdates() {
+	function setUpdates() {
 		const checkbox = $("input[name=slotList]:checked");
 		if (checkbox.length < 1) {
 			alert("슬롯을 선택하세요.");
+			return;
+		}
+
+		if(!confirm("수정 하시겠습니까?")){
 			return;
 		}
 
@@ -796,12 +782,13 @@
 			let USER_IDX_SLOT_IDX = $(this).val().split('_');;
 			json.USER_IDX = USER_IDX_SLOT_IDX[0];
 			json.SLOT_IDX = USER_IDX_SLOT_IDX[1];
-			json.PROD_GID = $("#PROD_GID_UPS").val();
-			json.PROD_MID = $("#PROD_MID_UPS").val();
-			json.PROD_KYWD = $("#PROD_KYWD_UPS").val();
-			json.PROD_URL = $("#PROD_URL_UPS").val();
+			json.PROD_GID = $("#GID_"+USER_IDX_SLOT_IDX[1]).val();
+			json.PROD_MID = $("#MID_"+USER_IDX_SLOT_IDX[1]).val();
+			json.PROD_KYWD = $("#KYWD_"+USER_IDX_SLOT_IDX[1]).val();
+			json.PROD_URL = $("#URL_"+USER_IDX_SLOT_IDX[1]).val();
 			json.PAGE = '<%=setPage%>';
 			json.PARAM = '<%=Param%>';
+			json.USER_TYPE = '<%=USER_TYPE%>';
 
 			jsonArray.push(json);
 		});
@@ -829,7 +816,7 @@
 				location.href = "/naver-shopping-slots"+json.url;
 			}
 		});
-	}*/
+	}
 
 	function setExtends() {
 		const checkbox = $("input[name=slotList]:checked");

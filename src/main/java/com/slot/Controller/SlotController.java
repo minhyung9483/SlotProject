@@ -281,6 +281,7 @@ public class SlotController {
 
 						String PAGE = (String) jParamObject.get("PAGE");
 						String PARAM = (String) jParamObject.get("PARAM");
+						String USER_TYPE = (String) jParamObject.get("USER_TYPE");
 						if(i==0 && PAGE != null && !"".equals(PAGE)){
 							URL = URL + "/" + PAGE;
 						}
@@ -288,34 +289,61 @@ public class SlotController {
 							URL = URL + PARAM;
 						}
 
-//						Member user = DBConnector.getMemberByIdx(jParamObject.get("USER_IDX")!=null?jParamObject.get("USER_IDX").toString():"");
+						if(USER_TYPE.contains("NS")){
+							NaverShoppingSlot s = DBConnector.getNaverShoppingSlotList(SlotIdx , 0, null, null, null, member.getUSER_PERM(), member.getUSER_IDX()).get(0);
+							Member m = DBConnector.getMemberList(UserIdx , 0, null, null, member.getUSER_PERM(), USER_TYPE, member.getUSER_IDX()).get(0);
 
-						NaverShoppingSlot s = DBConnector.getNaverShoppingSlotList(SlotIdx , 0, null, null, null, member.getUSER_PERM(), member.getUSER_IDX()).get(0);
-						Member m = DBConnector.getMemberList(UserIdx , 0, null, null, member.getUSER_PERM(), null, member.getUSER_IDX()).get(0);
+							jParamObject.put("RESULT", "X");
+							if("M".equals(member.getUSER_PERM()) || ("G".equals(member.getUSER_PERM()) && (m.getINST_ADMN_IDX() == member.getUSER_IDX() || s.getUSER_IDX() == member.getUSER_IDX())) || s.getUSER_IDX() == member.getUSER_IDX()){
+								String PROD_GID = (String) jParamObject.get("PROD_GID");
+								String PROD_MID = (String) jParamObject.get("PROD_MID");
+								String PROD_KYWD = (String) jParamObject.get("PROD_KYWD");
+								String PROD_URL = (String) jParamObject.get("PROD_URL");
 
-						jParamObject.put("RESULT", "X");
-						if("M".equals(member.getUSER_PERM()) || ("G".equals(member.getUSER_PERM()) && (m.getINST_ADMN_IDX() == member.getUSER_IDX() || s.getUSER_IDX() == member.getUSER_IDX())) || s.getUSER_IDX() == member.getUSER_IDX()){
-							String PROD_GID = (String) jParamObject.get("PROD_GID");
-							String PROD_MID = (String) jParamObject.get("PROD_MID");
-							String PROD_KYWD = (String) jParamObject.get("PROD_KYWD");
-							String PROD_URL = (String) jParamObject.get("PROD_URL");
-
-							if (DBConnector.UpdateNaverShoppingSlotInfo(SlotIdx, PROD_GID, PROD_MID, PROD_KYWD,
-									PROD_URL, "R", member.getUSER_IDX())) {
-								// 슬롯 로그는 신규, 연장, 삭제만 (수정, 상태변경은 X)
+								if (DBConnector.UpdateNaverShoppingSlotInfo(SlotIdx, PROD_GID, PROD_MID, PROD_KYWD,
+										PROD_URL, "R", member.getUSER_IDX())) {
+									// 슬롯 로그는 신규, 연장, 삭제만 (수정, 상태변경은 X)
 //								DBConnector.InsertSlotLogInfo(SlotIdx, 0, 1, "U", member.getUSER_IP(), member.getUSER_IDX());
-								jParamObject.put("RESULT", "O");
-								jParamObject.put("MSG", "");
-								success++;
+									jParamObject.put("RESULT", "O");
+									jParamObject.put("MSG", "");
+									success++;
+								} else {
+									jParamObject.put("MSG", "DB error");
+									fail++;
+								}
 							} else {
-								jParamObject.put("MSG", "DB error");
+								jParamObject.put("MSG", "Non-Existent id");
 								fail++;
 							}
-						} else {
-							jParamObject.put("MSG", "Non-Existent id");
-							fail++;
+							responseArray.add(jParamObject);
+						}else if(USER_TYPE.contains("NP")){
+							NaverPlaceSlot s = DBConnector.getNaverPlaceSlotList(SlotIdx , 0, null, null, null, member.getUSER_PERM(), member.getUSER_IDX()).get(0);
+							Member m = DBConnector.getMemberList(UserIdx , 0, null, null, member.getUSER_PERM(), USER_TYPE, member.getUSER_IDX()).get(0);
+
+							jParamObject.put("RESULT", "X");
+							if("M".equals(member.getUSER_PERM()) || ("G".equals(member.getUSER_PERM()) && (m.getINST_ADMN_IDX() == member.getUSER_IDX() || s.getUSER_IDX() == member.getUSER_IDX())) || s.getUSER_IDX() == member.getUSER_IDX()){
+								String PLCE_NAME = (String) jParamObject.get("PLCE_NAME");
+								String PLCE_CODE = (String) jParamObject.get("PLCE_CODE");
+								String PLCE_KYWD = (String) jParamObject.get("PLCE_KYWD");
+								String PLCE_URL = (String) jParamObject.get("PLCE_URL");
+
+								if (DBConnector.UpdateNaverPlaceSlotInfo(SlotIdx, PLCE_NAME, PLCE_CODE, PLCE_KYWD,
+										PLCE_URL, "R", member.getUSER_IDX())) {
+									// 슬롯 로그는 신규, 연장, 삭제만 (수정, 상태변경은 X)
+//								DBConnector.InsertSlotLogInfo(SlotIdx, 0, 1, "U", member.getUSER_IP(), member.getUSER_IDX());
+									jParamObject.put("RESULT", "O");
+									jParamObject.put("MSG", "");
+									success++;
+								} else {
+									jParamObject.put("MSG", "DB error");
+									fail++;
+								}
+							} else {
+								jParamObject.put("MSG", "Non-Existent id");
+								fail++;
+							}
+							responseArray.add(jParamObject);
 						}
-						responseArray.add(jParamObject);
 					}
 					jobj.put("value", responseArray);
 					jobj.put("result", true);
