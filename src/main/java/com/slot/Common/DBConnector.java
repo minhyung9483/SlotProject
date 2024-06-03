@@ -13,13 +13,13 @@ public class DBConnector {
 
 	static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
 
-	static final String DB_URL = "jdbc:mysql://3.39.70.49:3306/slot?characterEncoding=utf8&serverTimezone=Asia/Seoul";
-	static final String USERNAME = "thor";
-	static final String PASSWORD = "ThunderTest7979!";
-
-	/*static final String DB_URL = "jdbc:mysql://localhost:3306/slot?characterEncoding=utf8&serverTimezone=Asia/Seoul";
+	/*static final String DB_URL = "jdbc:mysql://3.39.70.49:3306/slot?characterEncoding=utf8&serverTimezone=Asia/Seoul";
 	static final String USERNAME = "thor";
 	static final String PASSWORD = "ThunderTest7979!";*/
+
+	static final String DB_URL = "jdbc:mysql://localhost:3306/slot?characterEncoding=utf8&serverTimezone=Asia/Seoul";
+	static final String USERNAME = "thor";
+	static final String PASSWORD = "ThunderTest7979!";
 
 	/*static final String DB_URL = "jdbc:mysql://localhost:3306/slot?characterEncoding=utf8&serverTimezone=Asia/Seoul";
 	static final String USERNAME = "jykim";
@@ -1055,6 +1055,8 @@ public class DBConnector {
 					SearchType = "M." + SearchType;
 				}else if("INST_ACTN".equals(SearchType)){
 					SearchType = "L." + SearchType;
+				}else if("INST_USER_ID".equals(SearchType)){
+					SearchType = "M_IN.USER_ID";
 				}else if("PROD_GID".equals(SearchType) || "PROD_MID".equals(SearchType) || "PROD_KYWD".equals(SearchType)){
 					SearchType = "S." + SearchType;
 				}
@@ -1116,6 +1118,8 @@ public class DBConnector {
 				SearchType = "M." + SearchType;
 			}else if("INST_ACTN".equals(SearchType)){
 				SearchType = "L." + SearchType;
+			}else if("INST_USER_ID".equals(SearchType)){
+				SearchType = "M_IN.USER_ID";
 			}else if("PROD_GID".equals(SearchType) || "PROD_MID".equals(SearchType) || "PROD_KYWD".equals(SearchType)){
 				SearchType = "S." + SearchType;
 			}
@@ -1216,6 +1220,8 @@ public class DBConnector {
 				SearchType = "M." + SearchType;
 			}else if("INST_ACTN".equals(SearchType)){
 				SearchType = "L." + SearchType;
+			}else if("INST_USER_ID".equals(SearchType)){
+				SearchType = "M_IN.USER_ID";
 			}else if("PROD_GID".equals(SearchType) || "PROD_MID".equals(SearchType) || "PROD_KYWD".equals(SearchType)){
 				SearchType = "S." + SearchType;
 			}
@@ -1721,6 +1727,8 @@ public class DBConnector {
 					SearchType = "M." + SearchType;
 				}else if("INST_ACTN".equals(SearchType)){
 					SearchType = "L." + SearchType;
+				}else if("INST_USER_ID".equals(SearchType)){
+					SearchType = "M_IN.USER_ID";
 				}else if("PLCE_NAME".equals(SearchType) || "PLCE_CODE".equals(SearchType) || "PLCE_KYWD".equals(SearchType)){
 					SearchType = "S." + SearchType;
 				}
@@ -1782,6 +1790,8 @@ public class DBConnector {
 				SearchType = "M." + SearchType;
 			}else if("INST_ACTN".equals(SearchType)){
 				SearchType = "L." + SearchType;
+			}else if("INST_USER_ID".equals(SearchType)){
+				SearchType = "M_IN.USER_ID";
 			}else if("PLCE_NAME".equals(SearchType) || "PLCE_CODE".equals(SearchType) || "PLCE_KYWD".equals(SearchType)){
 				SearchType = "S." + SearchType;
 			}
@@ -1882,6 +1892,8 @@ public class DBConnector {
 				SearchType = "M." + SearchType;
 			}else if("INST_ACTN".equals(SearchType)){
 				SearchType = "L." + SearchType;
+			}else if("INST_USER_ID".equals(SearchType)){
+				SearchType = "M_IN.USER_ID";
 			}else if("PLCE_NAME".equals(SearchType) || "PLCE_CODE".equals(SearchType) || "PLCE_KYWD".equals(SearchType)){
 				SearchType = "S." + SearchType;
 			}

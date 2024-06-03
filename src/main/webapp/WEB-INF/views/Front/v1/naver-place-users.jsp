@@ -68,6 +68,32 @@
 	.form-select {
 		background-position: right 5px center;
 	}
+
+	#loader{
+		display: none;
+		margin: 0 auto;
+		padding: 30px;
+		max-width: 1170px;
+	}
+
+	#text{
+		/*margin: 0 auto;*/
+		width: 100px;
+		height: 100px;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		font-size: 50px;
+		color: white;
+		transform: translate(-50%,-50%);
+		-ms-transform: translate(-50%,-50%);
+		z-index: 1056;
+	}
+
+	#text img{
+		width: 100%;
+		height: 100%;
+	}
 </style>
 <script type="text/javascript">
 	function changeQuery() {
@@ -480,7 +506,9 @@
 	</div>
 </div>
 <%-- 슬롯 모달 끝 --%>
-
+<div id="loader">
+	<div id="text"><img src="/img/Front/common/loading.gif" alt="Loading..."/></div>
+</div>
 <jsp:include page="common/script.jsp" />
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -640,6 +668,8 @@
 			return;
 		}
 
+		$("#loader").show();
+
 		let jsonArray = new Array();
 
 		checkbox.each(function(i) {
@@ -670,13 +700,14 @@
 			enctype: 'application/x-www-form-urlencoded',
 
 			error: function(xhr, status, error) {
+				$("#loader").hide();
 				alert("error:" + error);
 			},
 			success: function(response) {
 				const json = JSON.parse(response)
 				console.log('ajax: ' + json.value);
-				alert(json.alert);
 
+				alert(json.alert);
 				location.href = "/naver-place-users"+json.url;
 			}
 		});
@@ -697,6 +728,8 @@
 			form.USER_PWD_IN.focus();
 			return;
 		}
+
+		$("#loader").show();
 
 		const hiddenInput = document.createElement('input');
 		hiddenInput.type = 'hidden';
@@ -725,6 +758,8 @@
 			form.USER_PWD_UP.focus();
 			return;
 		}
+
+		$("#loader").show();
 
 		const hiddenInput = document.createElement('input');
 		hiddenInput.type = 'hidden';
@@ -765,6 +800,8 @@
 			form.SLOT_STDT_SL.focus();
 			return;
 		}
+
+		$("#loader").show();
 
 		/*const newDate = new Date(form.SLOT_STDT_SL.value)
 		newDate.setDate(newDate.getDate() + Number(form.SLOT_DAYS_SL.value) - 1);*/

@@ -124,7 +124,7 @@
 	}
 
 	function downloadExcel() {
-
+		$("#loader").show();
 		let formData = new FormData();
 		if(document.getElementById("SLOG_STDT").value.length>8){
 			document.getElementById("SLOG_STDT").value = document.getElementById("SLOG_STDT").value.replaceAll("-","");
@@ -148,6 +148,7 @@
 			contentType : false,
 
 			error: function(xhr, status, error) {
+				$("#loader").hide();
 				alert("error:" + error);
 			},
 			success: function(response) {
@@ -265,7 +266,7 @@
 		// 파일 저장
 		const fileName = "네이버쇼핑로그_<%=Today%>.xlsx";
 		XLSX.writeFile(wb, fileName);
-
+		$("#loader").hide();
 	}
 
 </script>
@@ -296,6 +297,7 @@
 									<option value="PROD_GID" <%="PROD_GID".equals(m_SearchType) ? "selected" : ""%>>묶음MID</option>
 									<option value="PROD_MID" <%="PROD_MID".equals(m_SearchType) ? "selected" : ""%>>단품MID</option>
 									<option value="PROD_KYWD" <%="PROD_KYWD".equals(m_SearchType) ? "selected" : ""%>>키워드</option>
+									<option value="INST_USER_ID" <%="INST_USER_ID".equals(m_SearchType) ? "selected" : ""%>>생성자</option>
 								</select>
 							</div>
 							<div class="col-lg-7 mt-3 px-2 mb-lg-0 px-lg-0 ps-lg-2">
@@ -339,7 +341,7 @@
 							</div>
 							<div class="col-lg-6 text-end">
 								<%if(logSlotList.size()>0 && "M".equals(member.getUSER_PERM())){%>
-								<button type="button" class="btn btn-primary ms-2 mb-1" onclick="downloadExcel()">
+								<button type="button" class="btn btn-outline-primary ms-2 mb-1" onclick="downloadExcel()">
 									엑셀로 내려받기
 								</button>
 								<%}%>

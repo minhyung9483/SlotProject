@@ -247,7 +247,7 @@ public class SlotController {
 		return jobj.toString();
 	}
 
-	/* 선택된 슬롯 수정 사용안함 */
+	/* 선택된 슬롯 수정 */
 	@ResponseBody
 //	@PostMapping("/updateSlot")
 	@RequestMapping(value="/updateSlot", method=RequestMethod.POST, produces = "application/text; charset=UTF-8")

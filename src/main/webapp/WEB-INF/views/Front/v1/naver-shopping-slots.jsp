@@ -71,6 +71,32 @@
 	.form-select {
 		background-position: right 5px center;
 	}
+
+	#loader{
+		display: none;
+		margin: 0 auto;
+		padding: 30px;
+		max-width: 1170px;
+	}
+
+	#text{
+		/*margin: 0 auto;*/
+		width: 100px;
+		height: 100px;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		font-size: 50px;
+		color: white;
+		transform: translate(-50%,-50%);
+		-ms-transform: translate(-50%,-50%);
+		z-index: 1056;
+	}
+
+	#text img{
+		width: 100%;
+		height: 100%;
+	}
 </style>
 <script type="text/javascript">
 	function changeQuery() {
@@ -169,7 +195,10 @@
 									선택연장
 								</button>
 								<%}%>
-								<button type="button" class="btn btn-outline-primary ms-2 mb-1" onclick="setUpdates()">
+								<%--<button type="button" class="btn btn-outline-primary ms-2 mb-1" onclick="setUpdates()">
+									선택수정
+								</button>--%>
+								<button type="button" class="btn btn-outline-primary ms-2 mb-1" id="updatesBtn">
 									선택수정
 								</button>
 								<%}%>
@@ -433,7 +462,7 @@
 </div>--%>
 <%-- 업데이트 모달 끝 --%>
 <%-- 선택 업데이트 모달 --%>
-<%--<div class="modal fade" id="updatesModal" tabindex="-1" aria-labelledby="updatesModalLabel" aria-hidden="true">
+<div class="modal fade" id="updatesModal" tabindex="-1" aria-labelledby="updatesModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-dialog-centered">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -459,19 +488,19 @@
 						<input type="text" class="form-control PROD_KYWD_UPS" id="PROD_KYWD_UPS" name="PROD_KYWD_UPS">
 					</div>
 					<div class="mb-3">
-						<label for="PROD_URL_UPS" class="col-form-label">상품링크</label>
+						<label for="PROD_URL_UPS" class="col-form-label">URL</label>
 						<input type="text" class="form-control PROD_URL_UPS" id="PROD_URL_UPS" name="PROD_URL_UPS">
 					</div>
 				</form>
 			</div>
 			<div class="modal-footer justify-content-center">
 				<button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">취소</button>
-				<button type="button" class="btn btn-primary" onclick="setUpdates()">수정하기</button>
+				<button type="button" class="btn btn-primary" onclick="setUpdatesTogether()">수정하기</button>
 			</div>
 		</div>
 	</div>
-</div>--%>
-<%-- 선택 업데이트 모달 끝 --%>
+</div>
+<%--선택 업데이트 모달 끝 --%>
 <%-- 연장 모달 --%>
 <div class="modal fade" id="extendsModal" tabindex="-1" aria-labelledby="extendsModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-dialog-centered">
@@ -556,21 +585,23 @@
 	</div>
 </div>
 <%-- 대량등록 모달 끝 --%>
-
+<div id="loader">
+	<div id="text"><img src="/img/Front/common/loading.gif" alt="Loading..."/></div>
+</div>
 <jsp:include page="common/script.jsp" />
 <script>
 	$(function() {
 		$('[data-toggle="tooltip"]').tooltip();
 	})
 	$(document).ready(function(){
-		/*$("#updatesBtn").click(function(){
+		$("#updatesBtn").click(function(){
 			const checkbox = $("input[name=slotList]:checked");
 			if (checkbox.length < 1) {
 				alert("슬롯을 선택하세요.");
 				return;
 			}
 			$("#updatesModal").modal('show');
-		});*/
+		});
 
 		$("#extendsBtn").click(function(){
 			const checkbox = $("input[name=slotList]:checked");
@@ -649,6 +680,8 @@
 			return;
 		}
 
+		$("#loader").show();
+
 		let jsonArray = new Array();
 
 		checkbox.each(function(i) {
@@ -682,6 +715,7 @@
 			enctype: 'application/x-www-form-urlencoded',
 
 			error: function(xhr, status, error) {
+				$("#loader").hide();
 				alert("error:" + error);
 			},
 			success: function(response) {
@@ -717,6 +751,8 @@
 	function setUpdateOne(USER_IDX_UP, SLOT_IDX_UP) {
 		// let jsonArray = new Array();
 
+		$("#loader").show();
+
 		let json = new Object();
 
 		json.USER_IDX = USER_IDX_UP;
@@ -747,6 +783,7 @@
 			enctype: 'application/x-www-form-urlencoded',
 
 			error: function(xhr, status, error) {
+				$("#loader").hide();
 				alert("error:" + error);
 			},
 			success: function(response) {
@@ -768,6 +805,8 @@
 		if(!confirm("수정 하시겠습니까?")){
 			return;
 		}
+
+		$("#loader").show();
 
 		let jsonArray = new Array();
 
@@ -806,6 +845,66 @@
 			enctype: 'application/x-www-form-urlencoded',
 
 			error: function(xhr, status, error) {
+				$("#loader").hide();
+				alert("error:" + error);
+			},
+			success: function(response) {
+				const json = JSON.parse(response)
+				console.log('ajax: ' + json.value);
+				alert(json.alert);
+
+				location.href = "/naver-shopping-slots"+json.url;
+			}
+		});
+	}
+
+	function setUpdatesTogether() {
+		const checkbox = $("input[name=slotList]:checked");
+		if (checkbox.length < 1) {
+			alert("슬롯을 선택하세요.");
+			return;
+		}
+
+		$("#loader").show();
+
+		let jsonArray = new Array();
+
+		checkbox.each(function(i) {
+			// 전체선택 체크박스 제거
+			if ($("#slotListAll").is(':checked') && i == 0) {
+				return;
+			}
+
+			let json = new Object();
+
+			let USER_IDX_SLOT_IDX = $(this).val().split('_');;
+			json.USER_IDX = USER_IDX_SLOT_IDX[0];
+			json.SLOT_IDX = USER_IDX_SLOT_IDX[1];
+			json.PROD_GID = $("#PROD_GID_UPS").val();
+			json.PROD_MID = $("#PROD_MID_UPS").val();
+			json.PROD_KYWD = $("#PROD_KYWD_UPS").val();
+			json.PROD_URL = $("#PROD_URL_UPS").val();
+			json.PAGE = '<%=setPage%>';
+			json.PARAM = '<%=Param%>';
+			json.USER_TYPE = '<%=USER_TYPE%>';
+
+			jsonArray.push(json);
+		});
+
+		let formData = new FormData();
+		formData.append("PARAM", JSON.stringify(jsonArray));
+
+		$.ajax({
+			url: '/updateSlot',
+			type: "POST",
+			datatype: "json",
+			processData: false,
+			data: formData,
+			contentType : false,
+			enctype: 'application/x-www-form-urlencoded',
+
+			error: function(xhr, status, error) {
+				$("#loader").hide();
 				alert("error:" + error);
 			},
 			success: function(response) {
@@ -824,6 +923,8 @@
 			alert("슬롯을 선택하세요.");
 			return;
 		}
+
+		$("#loader").show();
 
 		let jsonArray = new Array();
 
@@ -859,6 +960,7 @@
 			enctype: 'application/x-www-form-urlencoded',
 
 			error: function(xhr, status, error) {
+				$("#loader").hide();
 				alert("error:" + error);
 			},
 			success: function(response) {
@@ -877,6 +979,8 @@
 			alert("슬롯을 선택하세요.");
 			return;
 		}
+
+		$("#loader").show();
 
 		let jsonArray = new Array();
 
@@ -911,6 +1015,7 @@
 			enctype: 'application/x-www-form-urlencoded',
 
 			error: function(xhr, status, error) {
+				$("#loader").hide();
 				alert("error:" + error);
 			},
 			success: function(response) {
@@ -944,6 +1049,8 @@
 	}
 
 	function setUpload() {
+		$("#loader").show();
+
 		let json = new Object();
 
 		json.USER_TYPE = '<%=USER_TYPE%>';
@@ -962,6 +1069,7 @@
 			enctype: 'application/x-www-form-urlencoded',
 
 			error: function(xhr, status, error) {
+				$("#loader").hide();
 				alert("error:" + error);
 			},
 			success: function(response) {
