@@ -63,9 +63,9 @@ public class MemberController {
 		member = (Member)ContextUtil.getAttrFromSession(Protocol.Json.KEY_MEMBER);
 		if(member!=null) {
 			/* 업무시간 외 셧다운 주석처리 */
-			if(!"M".equals(member.getUSER_PERM()) && !Util.checkWorkingTime()){
+			/*if(!"M".equals(member.getUSER_PERM()) && !Util.checkWorkingTime()){
 				return "redirect:/users";
-			}
+			}*/
 
 			String USER_ID = Request.getParameter("USER_ID_IN");
 			String USER_TYPE = Request.getParameter("USER_TYPE_IN");
@@ -109,15 +109,13 @@ public class MemberController {
 					return "redirect:/naver-"+RETURN_URL+"-slots";
 				}
 			}
-
-
 		}
 		return "redirect:/login";
 	}
 
 	/* 유저 정보 수정 */
 	@RequestMapping(value="/setUser/{UserIdx}", method=RequestMethod.POST)
-	public String SetUserIdx(@PathVariable("UserIdx") int UserIdx, HttpServletRequest Request, Model model) throws Exception{
+	public String SetUserIdx(@PathVariable("UserIdx") int UserIdx, HttpServletRequest Request, HttpServletResponse response, Model model) throws Exception{
 		member = (Member)ContextUtil.getAttrFromSession(Protocol.Json.KEY_MEMBER);
 		if(member!=null) {
 			String USER_TYPE = Request.getParameter("USER_TYPE_UP");
@@ -133,9 +131,9 @@ public class MemberController {
 			}
 
 			/* 업무시간 외 셧다운 주석처리 */
-			if(!"M".equals(member.getUSER_PERM()) && !Util.checkWorkingTime()){
+			/*if(!"M".equals(member.getUSER_PERM()) && !Util.checkWorkingTime()){
 				return "redirect:/naver-"+RETURN_URL+"-users";
-			}
+			}*/
 
 			Member m = DBConnector.getMemberList(UserIdx , 0, null, null, member.getUSER_PERM(), USER_TYPE, member.getUSER_IDX()).get(0);
 			if(m != null){
@@ -202,9 +200,9 @@ public class MemberController {
 		member = (Member)ContextUtil.getAttrFromSession(Protocol.Json.KEY_MEMBER);
 		if(member!=null) {
 			/* 업무시간 외 셧다운 주석처리 */
-			if(!"M".equals(member.getUSER_PERM()) && !Util.checkWorkingTime()){
+			/*if(!"M".equals(member.getUSER_PERM()) && !Util.checkWorkingTime()){
 				return jobj.toString();
-			}
+			}*/
 
 			if(param!=null && param.size() > 0) {
 				try {

@@ -184,6 +184,12 @@
 				jsonSearch.SearchType = "플레이스코드";
 			} else if (jsonSearch.SearchType == "PLCE_KYWD") {
 				jsonSearch.SearchType = "키워드";
+			} else if (jsonSearch.SearchType == "PLCE_URL") {
+				jsonSearch.SearchType = "URL";
+			} else if (jsonSearch.SearchType == "TYPE_NAME") {
+				jsonSearch.SearchType = "슬롯타입";
+			} else if (jsonSearch.SearchType == "INST_USER_ID") {
+				jsonSearch.SearchType = "생성자";
 			}
 
 			search.push(jsonSearch.SearchType);
@@ -202,6 +208,7 @@
 		menu.push("개수");
 		menu.push("슬롯타입");
 		menu.push("키워드");
+		menu.push("URL");
 		menu.push("플레이스명");
 		menu.push("플레이스코드");
 		menu.push("생성자");
@@ -238,6 +245,7 @@
 			bottom.push(data[i].SLOT_EA);
 			bottom.push(data[i].TYPE_NAME);
 			bottom.push(data[i].PLCE_KYWD);
+			bottom.push(data[i].PLCE_URL);
 			bottom.push(data[i].PLCE_NAME);
 			bottom.push(data[i].PLCE_CODE);
 			bottom.push(data[i].INST_USER_ID);
@@ -252,6 +260,7 @@
 				{"width" : 10},
 				{"width" : 10},
 				{"width" : 10},
+				{"width" : 20},
 				{"width" : 20},
 				{"width" : 20},
 				{"width" : 20},
@@ -293,11 +302,13 @@
 							<div class="col-lg-3 mt-3 px-2 mb-lg-0 px-lg-0 ps-lg-2 pe-lg-0">
 								<select class="form-select" id="searchType" name="searchType">
 									<option value="USER_ID" <%="USER_ID".equals(m_SearchType) ? "selected" : ""%>>아이디</option>
-									<option value="INST_ACTN" <%="INST_ACTN".equals(m_SearchType) ? "selected" : ""%>>구분</option>
+									<option value="TYPE_NAME" <%="TYPE_NAME".equals(m_SearchType) ? "selected" : ""%>>슬롯타입</option>
+									<option value="PLCE_KYWD" <%="PLCE_KYWD".equals(m_SearchType) ? "selected" : ""%>>키워드</option>
+									<option value="PLCE_URL" <%="PLCE_URL".equals(m_SearchType) ? "selected" : ""%>>URL</option>
 									<option value="PLCE_NAME" <%="PLCE_NAME".equals(m_SearchType) ? "selected" : ""%>>플레이스명</option>
 									<option value="PLCE_CODE" <%="PLCE_CODE".equals(m_SearchType) ? "selected" : ""%>>플레이스코드</option>
-									<option value="PLCE_KYWD" <%="PLCE_KYWD".equals(m_SearchType) ? "selected" : ""%>>키워드</option>
 									<option value="INST_USER_ID" <%="INST_USER_ID".equals(m_SearchType) ? "selected" : ""%>>생성자</option>
+									<option value="INST_ACTN" <%="INST_ACTN".equals(m_SearchType) ? "selected" : ""%>>구분</option>
 								</select>
 							</div>
 							<div class="col-lg-7 mt-3 px-2 mb-lg-0 px-lg-0 ps-lg-2">
@@ -357,17 +368,18 @@
 							<table class="table text-nowrap mb-0 align-middle">
 								<colgroup>
 									<col width="6%">
-									<col width="10.5%">
+									<col width="9%">
 									<col width="7%">
 									<col width="6%">
 									<col width="6%">
 
-									<col width="10.5%">
-									<col width="10.5%">
-									<col width="10.5%">
-									<col width="10.5%">
-									<col width="10.5%">
-									<col width="10.5%">
+									<col width="9%">
+									<col width="9%">
+									<col width="9%">
+									<col width="9%">
+									<col width="9%">
+									<col width="9%">
+									<col width="9%">
 								</colgroup>
 								<thead class="text-dark fs-4 text-center bg-light-gray border-top">
 								<tr>
@@ -375,7 +387,7 @@
 										//////////////////////////////////////
 										//////		Title Setting		//////
 										//////////////////////////////////////
-										String[] Title = new String[]{"번호", "아이디", "구분", "기간", "개수", "슬롯타입", "키워드", "플레이스명", "플레이스코드", "생성자", "생성일"};
+										String[] Title = new String[]{"번호", "아이디", "구분", "기간", "개수", "슬롯타입", "키워드", "URL", "플레이스명", "플레이스코드", "생성자", "생성일"};
 
 										for(int i=0;i<Title.length;i++){
 											out.print("<th class=\" align-middle\">");
@@ -426,10 +438,13 @@
 										<input type="text" class="form-control-plaintext text-center" id="EA_<%=logSlotList.get(i).getLOG_SLOT_IDX()%>" name="EA_<%=logSlotList.get(i).getLOG_SLOT_IDX()%>" value="<%=logSlotList.get(i).getSLOT_EA()%>" title="<%=logSlotList.get(i).getSLOT_EA()%>" readonly>
 									</td>
 									<td class="">
-										<input type="text" class="form-control-plaintext text-center" id="NAME_<%=logSlotList.get(i).getLOG_SLOT_IDX()%>" name="NAME_<%=logSlotList.get(i).getLOG_SLOT_IDX()%>" value="<%=!"".equals(logSlotList.get(i).getTYPE_NAME())&&logSlotList.get(i).getTYPE_NAME()!=null ? logSlotList.get(i).getTYPE_NAME() : "-"%>" title="<%=!"".equals(logSlotList.get(i).getTYPE_NAME())&&logSlotList.get(i).getTYPE_NAME()!=null ? logSlotList.get(i).getTYPE_NAME() : "-"%>" readonly>
+										<input type="text" class="form-control-plaintext text-center" id="TYPE_<%=logSlotList.get(i).getLOG_SLOT_IDX()%>" name="TYPE_<%=logSlotList.get(i).getLOG_SLOT_IDX()%>" value="<%=!"".equals(logSlotList.get(i).getTYPE_NAME())&&logSlotList.get(i).getTYPE_NAME()!=null ? logSlotList.get(i).getTYPE_NAME() : "-"%>" title="<%=!"".equals(logSlotList.get(i).getTYPE_NAME())&&logSlotList.get(i).getTYPE_NAME()!=null ? logSlotList.get(i).getTYPE_NAME() : "-"%>" readonly>
 									</td>
 									<td class="">
 										<input type="text" class="form-control-plaintext text-center" id="KYWD_<%=logSlotList.get(i).getLOG_SLOT_IDX()%>" name="KYWD_<%=logSlotList.get(i).getLOG_SLOT_IDX()%>" value="<%=!"".equals(logSlotList.get(i).getPLCE_KYWD()) ? logSlotList.get(i).getPLCE_KYWD() : "-"%>" title="<%=!"".equals(logSlotList.get(i).getPLCE_KYWD()) ? logSlotList.get(i).getPLCE_KYWD() : "-"%>" readonly>
+									</td>
+									<td class="">
+										<input type="text" class="form-control-plaintext text-center" id="URL_<%=logSlotList.get(i).getLOG_SLOT_IDX()%>" name="URL_<%=logSlotList.get(i).getLOG_SLOT_IDX()%>" value="<%=!"".equals(logSlotList.get(i).getPLCE_URL()) ? logSlotList.get(i).getPLCE_URL() : "-"%>" title="<%=!"".equals(logSlotList.get(i).getPLCE_URL()) ? logSlotList.get(i).getPLCE_URL() : "-"%>" readonly>
 									</td>
 									<td class="">
 										<input type="text" class="form-control-plaintext text-center" id="NAME_<%=logSlotList.get(i).getLOG_SLOT_IDX()%>" name="NAME_<%=logSlotList.get(i).getLOG_SLOT_IDX()%>" value="<%=!"".equals(logSlotList.get(i).getPLCE_NAME()) ? logSlotList.get(i).getPLCE_NAME() : "-"%>" title="<%=!"".equals(logSlotList.get(i).getPLCE_NAME()) ? logSlotList.get(i).getPLCE_NAME() : "-"%>" readonly>

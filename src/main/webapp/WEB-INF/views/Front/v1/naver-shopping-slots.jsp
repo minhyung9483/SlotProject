@@ -148,9 +148,11 @@
 							<div class="col-lg-3 mt-3 px-2 mb-lg-0 px-lg-0 ps-lg-2 pe-lg-0">
 								<select class="form-select" id="searchType" name="searchType">
 									<option value="USER_ID" <%="USER_ID".equals(m_SearchType) ? "selected" : ""%>>아이디</option>
+									<option value="TYPE_NAME" <%="TYPE_NAME".equals(m_SearchType) ? "selected" : ""%>>슬롯타입</option>
+									<option value="PROD_KYWD" <%="PROD_KYWD".equals(m_SearchType) ? "selected" : ""%>>키워드</option>
+									<option value="PROD_URL" <%="PROD_URL".equals(m_SearchType) ? "selected" : ""%>>URL</option>
 									<option value="PROD_GID" <%="PROD_GID".equals(m_SearchType) ? "selected" : ""%>>묶음MID</option>
 									<option value="PROD_MID" <%="PROD_MID".equals(m_SearchType) ? "selected" : ""%>>단품MID</option>
-									<option value="PROD_KYWD" <%="PROD_KYWD".equals(m_SearchType) ? "selected" : ""%>>키워드</option>
 								</select>
 							</div>
 							<div class="col-lg-7 mt-3 px-2 mb-lg-0 px-lg-0 ps-lg-2">

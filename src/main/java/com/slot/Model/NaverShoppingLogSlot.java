@@ -20,6 +20,7 @@ public class NaverShoppingLogSlot {
 	private String PROD_GID;			//
 	private String PROD_MID;			//
 	private String PROD_KYWD;			//
+	private String PROD_URL;			//
 	private int INST_USER_IDX;			//
 	private String INST_USER_ID;			//
 	private String INST_DT;			//

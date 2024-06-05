@@ -20,6 +20,7 @@ public class NaverPlaceLogSlot {
 	private String PLCE_NAME;			//
 	private String PLCE_CODE;			//
 	private String PLCE_KYWD;			//
+	private String PLCE_URL;			//
 	private int INST_USER_IDX;			//
 	private String INST_USER_ID;			//
 	private String INST_DT;			//

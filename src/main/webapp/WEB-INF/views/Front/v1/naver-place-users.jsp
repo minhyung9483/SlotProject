@@ -780,7 +780,7 @@
 	}
 
 	/* 슬롯 추가 후 원래 페이지로 돌아감 */
-	function setSlot(){
+	function setSlotOld(){
 		var form = document.slotForm;
 
 		if (!form.SLOT_EA_SL.value) {
@@ -821,6 +821,69 @@
 		form.setAttribute("action", "/setSlot/"+form.USER_IDX_SL.value); //요청 보낼 주소
 		form.submit();
 
+	}
+
+	/* 슬롯 추가 후 원래 페이지로 돌아감 */
+	function setSlot(){
+		var form = document.slotForm;
+
+		if (!form.SLOT_EA_SL.value) {
+			alert("추가개수를 입력하세요.");
+			form.SLOT_EA_SL.focus();
+			return;
+		}
+
+		if (!form.SLOT_DAYS_SL.value) {
+			alert("작업일수를 입력하세요.");
+			form.SLOT_DAYS_SL.focus();
+			return;
+		}
+
+		if (!form.SLOT_STDT_SL.value) {
+			alert("시작일 선택하세요.");
+			form.SLOT_STDT_SL.focus();
+			return;
+		}
+
+		$("#loader").show();
+
+		let json = new Object();
+
+		json.USER_IDX_SL = form.USER_IDX_SL.value;
+		json.PAGE_SL = form.PAGE_SL.value;
+		json.PARAM_SL = form.PARAM_SL.value;
+		json.SLOT_EA_SL = form.SLOT_EA_SL.value;
+		json.SLOT_TYPE_SL = form.SLOT_TYPE_SL.value;
+		json.SLOT_DAYS_SL = form.SLOT_DAYS_SL.value;
+		json.SLOT_STDT_SL = form.SLOT_STDT_SL.value.replaceAll("-","");
+		json.SLOT_ENDT_SL = form.SLOT_ENDT_SL.value.replaceAll("-","");
+		json.USER_TYPE_SL = '<%=USER_TYPE%>';
+
+		// jsonArray.push(json);
+
+		let formData = new FormData();
+		formData.append("PARAM", JSON.stringify(json));
+
+		$.ajax({
+			url: "/setSlot",
+			type: "POST",
+			datatype: "json",
+			processData: false,
+			data: formData,
+			contentType : false,
+			enctype: 'application/x-www-form-urlencoded',
+
+			error: function(xhr, status, error) {
+				$("#loader").hide();
+				alert("error:" + error);
+			},
+			success: function(response) {
+				const json = JSON.parse(response)
+				alert(json.alert);
+
+				location.href = "/naver-place-users"+json.url;
+			}
+		});
 	}
 
 	function setEndDate(){

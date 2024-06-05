@@ -1,13 +1,6 @@
 package com.slot.Common;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.URLEncoder;
@@ -29,8 +22,11 @@ import java.util.regex.Pattern;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import javax.servlet.http.HttpServletResponse;
 
 import com.slot.Model.Member;
+import com.slot.Model.NaverPlaceSlotType;
+import com.slot.Model.NaverShoppingSlotType;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
 
@@ -352,6 +348,71 @@ public class Util {
 		return result;
 	}
 
+	public static boolean checkShutDownTime(String USER_TYPE, int SLOT_TYPE){
+		boolean result = true;
+		member = (Member)ContextUtil.getAttrFromSession(Protocol.Json.KEY_MEMBER);
+
+		mCalendar = Calendar.getInstance();
+		curHour = mCalendar.get(Calendar.HOUR_OF_DAY);
+		curMinute = mCalendar. get(Calendar.MINUTE);
+
+		if(USER_TYPE.contains("NS")){
+			NaverShoppingSlotType naverShoppingSlotType = DBConnector.getNaverShoppingSlotType(SLOT_TYPE,"Y").get(0);
+
+			String curTime = (Integer.toString(curHour).length()==1? "0" + curHour : curHour)  + "" +	(Integer.toString(curMinute).length()==1? "0" + curMinute : curMinute);
+			String curStatus = "근무시간";
+			if(Integer.parseInt(curTime) >= Integer.parseInt(naverShoppingSlotType.getSLOT_ENTM().toString())){
+				result = false;
+				curStatus = "근무시간 지남";
+			}else if(Integer.parseInt(curTime) < Integer.parseInt(naverShoppingSlotType.getSLOT_STTM().toString())){
+				result = false;
+				curStatus = "근무시간 전";
+			}
+			if(result){
+				Logger.LogOn(false);
+			}else{
+				Logger.LogOn(true);
+			}
+			Logger.Info(TAG, "==========================");
+			Logger.Info(TAG, "현재시간 : " + curTime);
+			Logger.Info(TAG, "시작시간 : " + Integer.parseInt(naverShoppingSlotType.getSLOT_STTM().toString()));
+			Logger.Info(TAG, "종료시간 : " + Integer.parseInt(naverShoppingSlotType.getSLOT_ENTM().toString()));
+			Logger.Info(TAG, "현재상태 : " + curStatus);
+			Logger.Info(TAG, "워킹타임 : " + result);
+			Logger.Info(TAG, "요청자 : " + member.getUSER_ID());
+			Logger.Info(TAG, "요청IP : " + member.getUSER_IP());
+			Logger.Info(TAG, "==========================");
+		}else if(USER_TYPE.contains("NP")){
+			NaverPlaceSlotType naverPlaceSlotType = DBConnector.getNaverPlaceSlotType(SLOT_TYPE,"Y").get(0);
+
+			String curTime = (Integer.toString(curHour).length()==1? "0" + curHour : curHour)  + "" +	(Integer.toString(curMinute).length()==1? "0" + curMinute : curMinute);
+			String curStatus = "근무시간";
+			if(Integer.parseInt(curTime) >= Integer.parseInt(naverPlaceSlotType.getSLOT_ENTM().toString())){
+				result = false;
+				curStatus = "근무시간 지남";
+			}else if(Integer.parseInt(curTime) < Integer.parseInt(naverPlaceSlotType.getSLOT_STTM().toString())){
+				result = false;
+				curStatus = "근무시간 전";
+			}
+			if(result){
+				Logger.LogOn(false);
+			}else{
+				Logger.LogOn(true);
+			}
+			Logger.Info(TAG, "==========================");
+			Logger.Info(TAG, "현재시간 : " + curTime);
+			Logger.Info(TAG, "시작시간 : " + Integer.parseInt(naverPlaceSlotType.getSLOT_STTM().toString()));
+			Logger.Info(TAG, "종료시간 : " + Integer.parseInt(naverPlaceSlotType.getSLOT_ENTM().toString()));
+			Logger.Info(TAG, "현재상태 : " + curStatus);
+			Logger.Info(TAG, "워킹타임 : " + result);
+			Logger.Info(TAG, "요청자 : " + member.getUSER_ID());
+			Logger.Info(TAG, "요청IP : " + member.getUSER_IP());
+			Logger.Info(TAG, "==========================");
+		}
+
+		return result;
+	}
+
 	public static String encodeKorean(String url){
 		// StringBuilder를 사용하여 결과를 만듭니다.
 		StringBuilder result = new StringBuilder();
@@ -397,5 +458,33 @@ public class Util {
 
 		// 정수로 반환
 		return (int) daysBetween;
+	}
+	public static void init(HttpServletResponse response) {
+		response.setContentType("text/html; charset=euc-kr");
+		response.setCharacterEncoding("euc-kr");
+	}
+	public static void alert(HttpServletResponse response, String alertText) throws IOException {
+		init(response);
+		PrintWriter out = response.getWriter();
+		out.println("<script>alert('" + alertText + "');</script> ");
+		out.flush();
+	}
+	public static void movePage(HttpServletResponse response, String nextPage) throws IOException {
+		init(response);
+		PrintWriter out = response.getWriter();
+		out.println("<script>location.href='" + nextPage + "';</script> ");
+		out.flush();
+	}
+	public static void alertAndMovePage(HttpServletResponse response, String alertText, String nextPage) throws IOException {
+		init(response);
+		PrintWriter out = response.getWriter();
+		out.println("<script>alert('" + alertText + "'); location.href='" + nextPage + "';</script> ");
+		out.flush();
+	}
+	public static void alertAndBackPage(HttpServletResponse response, String alertText) throws IOException {
+		init(response);
+		PrintWriter out = response.getWriter();
+		out.println("<script>alert('" + alertText + "'); history.go(-1);</script>");
+		out.flush();
 	}
 }

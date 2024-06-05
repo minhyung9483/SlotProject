@@ -13,18 +13,20 @@ public class DBConnector {
 
 	static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
 
+	/* server -> server db */
+	/*static final String DB_URL = "jdbc:mysql://localhost:3306/slot?characterEncoding=utf8&serverTimezone=Asia/Seoul";
+	static final String USERNAME = "thor";
+	static final String PASSWORD = "ThunderTest7979!";*/
+
+	/* local -> server db */
 	/*static final String DB_URL = "jdbc:mysql://3.39.70.49:3306/slot?characterEncoding=utf8&serverTimezone=Asia/Seoul";
 	static final String USERNAME = "thor";
 	static final String PASSWORD = "ThunderTest7979!";*/
 
+	/* local -> local db */
 	static final String DB_URL = "jdbc:mysql://localhost:3306/slot?characterEncoding=utf8&serverTimezone=Asia/Seoul";
-	static final String USERNAME = "thor";
-	static final String PASSWORD = "ThunderTest7979!";
-
-	/*static final String DB_URL = "jdbc:mysql://localhost:3306/slot?characterEncoding=utf8&serverTimezone=Asia/Seoul";
 	static final String USERNAME = "jykim";
-	static final String PASSWORD = "Wodud9407#";*/
-
+	static final String PASSWORD = "Wodud9407#";
 	
 	public DBConnector() {
 		try {
@@ -176,7 +178,7 @@ public class DBConnector {
 		Connection conn = null;
 		PreparedStatement psmt = null;
 		boolean result = false;
-		String sql = "SELECT  * FROM TB_MEMBER WHERE 12			=? AND USE_YN='Y'";
+		String sql = "SELECT  * FROM TB_MEMBER WHERE USER_ID=? AND USE_YN='Y'";
 
 		try {
 			Class.forName(JDBC_DRIVER);
@@ -669,8 +671,10 @@ public class DBConnector {
 			if(SearchType!=null && SearchType.length() > 0){
 				if("USER_ID".equals(SearchType)){
 					SearchType = "M." + SearchType;
-				}else{
+				}else if("PROD_GID".equals(SearchType) || "PROD_MID".equals(SearchType) || "PROD_KYWD".equals(SearchType) || "PROD_URL".equals(SearchType)){
 					SearchType = "S." + SearchType;
+				}else if("TYPE_NAME".equals(SearchType)){
+					SearchType = "ST." + SearchType;
 				}
 			}
 
@@ -725,8 +729,10 @@ public class DBConnector {
 		if(SearchType!=null && SearchType.length() > 0){
 			if("USER_ID".equals(SearchType)){
 				SearchType = "M." + SearchType;
-			}else{
+			}else if("PROD_GID".equals(SearchType) || "PROD_MID".equals(SearchType) || "PROD_KYWD".equals(SearchType) || "PROD_URL".equals(SearchType)){
 				SearchType = "S." + SearchType;
+			}else if("TYPE_NAME".equals(SearchType)){
+				SearchType = "ST." + SearchType;
 			}
 		}
 
@@ -1057,8 +1063,10 @@ public class DBConnector {
 					SearchType = "L." + SearchType;
 				}else if("INST_USER_ID".equals(SearchType)){
 					SearchType = "M_IN.USER_ID";
-				}else if("PROD_GID".equals(SearchType) || "PROD_MID".equals(SearchType) || "PROD_KYWD".equals(SearchType)){
+				}else if("PROD_GID".equals(SearchType) || "PROD_MID".equals(SearchType) || "PROD_KYWD".equals(SearchType) || "PROD_URL".equals(SearchType)){
 					SearchType = "S." + SearchType;
+				}else if("TYPE_NAME".equals(SearchType)){
+					SearchType = "ST." + SearchType;
 				}
 			}
 
@@ -1120,8 +1128,10 @@ public class DBConnector {
 				SearchType = "L." + SearchType;
 			}else if("INST_USER_ID".equals(SearchType)){
 				SearchType = "M_IN.USER_ID";
-			}else if("PROD_GID".equals(SearchType) || "PROD_MID".equals(SearchType) || "PROD_KYWD".equals(SearchType)){
+			}else if("PROD_GID".equals(SearchType) || "PROD_MID".equals(SearchType) || "PROD_KYWD".equals(SearchType) || "PROD_URL".equals(SearchType)){
 				SearchType = "S." + SearchType;
+			}else if("TYPE_NAME".equals(SearchType)){
+				SearchType = "ST." + SearchType;
 			}
 		}
 
@@ -1138,6 +1148,7 @@ public class DBConnector {
 				"S.PROD_GID, \n" +
 				"S.PROD_MID, \n" +
 				"S.PROD_KYWD, \n" +
+				"S.PROD_URL, \n" +
 				"M_IN.USER_IDX AS INST_USER_IDX, \n" +
 				"M_IN.USER_ID AS INST_USER_ID, \n" +
 				"DATE_FORMAT(L.INST_DT, '%Y.%m.%d (%H:%i)') AS INST_DT, \n" +
@@ -1181,6 +1192,7 @@ public class DBConnector {
 					ls.setPROD_GID(rs.getString("PROD_GID"));
 					ls.setPROD_MID(rs.getString("PROD_MID"));
 					ls.setPROD_KYWD(rs.getString("PROD_KYWD"));
+					ls.setPROD_URL(rs.getString("PROD_URL"));
 					ls.setINST_USER_IDX(rs.getInt("INST_USER_IDX"));
 					ls.setINST_USER_ID(rs.getString("INST_USER_ID"));
 					ls.setINST_DT(rs.getString("INST_DT"));
@@ -1222,8 +1234,10 @@ public class DBConnector {
 				SearchType = "L." + SearchType;
 			}else if("INST_USER_ID".equals(SearchType)){
 				SearchType = "M_IN.USER_ID";
-			}else if("PROD_GID".equals(SearchType) || "PROD_MID".equals(SearchType) || "PROD_KYWD".equals(SearchType)){
+			}else if("PROD_GID".equals(SearchType) || "PROD_MID".equals(SearchType) || "PROD_KYWD".equals(SearchType) || "PROD_URL".equals(SearchType)){
 				SearchType = "S." + SearchType;
+			}else if("TYPE_NAME".equals(SearchType)){
+				SearchType = "ST." + SearchType;
 			}
 		}
 
@@ -1240,6 +1254,7 @@ public class DBConnector {
 				"S.PROD_GID, \n" +
 				"S.PROD_MID, \n" +
 				"S.PROD_KYWD, \n" +
+				"S.PROD_URL, \n" +
 				"M_IN.USER_IDX AS INST_USER_IDX, \n" +
 				"M_IN.USER_ID AS INST_USER_ID, \n" +
 				"DATE_FORMAT(L.INST_DT, '%Y.%m.%d (%H:%i)') AS INST_DT, \n" +
@@ -1282,6 +1297,7 @@ public class DBConnector {
 					data.put("PROD_GID",rs.getString("PROD_GID"));
 					data.put("PROD_MID",rs.getString("PROD_MID"));
 					data.put("PROD_KYWD",rs.getString("PROD_KYWD"));
+					data.put("PROD_URL",rs.getString("PROD_URL"));
 					data.put("INST_USER_IDX",rs.getInt("INST_USER_IDX"));
 					data.put("INST_USER_ID",rs.getString("INST_USER_ID"));
 					data.put("INST_DT",rs.getString("INST_DT"));
@@ -1341,8 +1357,10 @@ public class DBConnector {
 			if(SearchType!=null && SearchType.length() > 0){
 				if("USER_ID".equals(SearchType)){
 					SearchType = "M." + SearchType;
-				}else{
+				}else if("PLCE_NAME".equals(SearchType) || "PLCE_CODE".equals(SearchType) || "PLCE_KYWD".equals(SearchType) || "PLCE_URL".equals(SearchType)){
 					SearchType = "S." + SearchType;
+				}else if("TYPE_NAME".equals(SearchType)){
+					SearchType = "ST." + SearchType;
 				}
 			}
 
@@ -1397,8 +1415,10 @@ public class DBConnector {
 		if(SearchType!=null && SearchType.length() > 0){
 			if("USER_ID".equals(SearchType)){
 				SearchType = "M." + SearchType;
-			}else{
+			}else if("PLCE_NAME".equals(SearchType) || "PLCE_CODE".equals(SearchType) || "PLCE_KYWD".equals(SearchType) || "PLCE_URL".equals(SearchType)){
 				SearchType = "S." + SearchType;
+			}else if("TYPE_NAME".equals(SearchType)){
+				SearchType = "ST." + SearchType;
 			}
 		}
 
@@ -1729,8 +1749,10 @@ public class DBConnector {
 					SearchType = "L." + SearchType;
 				}else if("INST_USER_ID".equals(SearchType)){
 					SearchType = "M_IN.USER_ID";
-				}else if("PLCE_NAME".equals(SearchType) || "PLCE_CODE".equals(SearchType) || "PLCE_KYWD".equals(SearchType)){
+				}else if("PLCE_NAME".equals(SearchType) || "PLCE_CODE".equals(SearchType) || "PLCE_KYWD".equals(SearchType) || "PLCE_URL".equals(SearchType)){
 					SearchType = "S." + SearchType;
+				}else if("TYPE_NAME".equals(SearchType)){
+					SearchType = "ST." + SearchType;
 				}
 			}
 
@@ -1792,8 +1814,10 @@ public class DBConnector {
 				SearchType = "L." + SearchType;
 			}else if("INST_USER_ID".equals(SearchType)){
 				SearchType = "M_IN.USER_ID";
-			}else if("PLCE_NAME".equals(SearchType) || "PLCE_CODE".equals(SearchType) || "PLCE_KYWD".equals(SearchType)){
+			}else if("PLCE_NAME".equals(SearchType) || "PLCE_CODE".equals(SearchType) || "PLCE_KYWD".equals(SearchType) || "PLCE_URL".equals(SearchType)){
 				SearchType = "S." + SearchType;
+			}else if("TYPE_NAME".equals(SearchType)){
+				SearchType = "ST." + SearchType;
 			}
 		}
 
@@ -1810,6 +1834,7 @@ public class DBConnector {
 				"S.PLCE_NAME, \n" +
 				"S.PLCE_CODE, \n" +
 				"S.PLCE_KYWD, \n" +
+				"S.PLCE_URL, \n" +
 				"M_IN.USER_IDX AS INST_USER_IDX, \n" +
 				"M_IN.USER_ID AS INST_USER_ID, \n" +
 				"DATE_FORMAT(L.INST_DT, '%Y.%m.%d (%H:%i)') AS INST_DT, \n" +
@@ -1853,6 +1878,7 @@ public class DBConnector {
 					ls.setPLCE_NAME(rs.getString("PLCE_NAME"));
 					ls.setPLCE_CODE(rs.getString("PLCE_CODE"));
 					ls.setPLCE_KYWD(rs.getString("PLCE_KYWD"));
+					ls.setPLCE_URL(rs.getString("PLCE_URL"));
 					ls.setINST_USER_IDX(rs.getInt("INST_USER_IDX"));
 					ls.setINST_USER_ID(rs.getString("INST_USER_ID"));
 					ls.setINST_DT(rs.getString("INST_DT"));
@@ -1894,8 +1920,10 @@ public class DBConnector {
 				SearchType = "L." + SearchType;
 			}else if("INST_USER_ID".equals(SearchType)){
 				SearchType = "M_IN.USER_ID";
-			}else if("PLCE_NAME".equals(SearchType) || "PLCE_CODE".equals(SearchType) || "PLCE_KYWD".equals(SearchType)){
+			}else if("PLCE_NAME".equals(SearchType) || "PLCE_CODE".equals(SearchType) || "PLCE_KYWD".equals(SearchType) || "PLCE_URL".equals(SearchType)){
 				SearchType = "S." + SearchType;
+			}else if("TYPE_NAME".equals(SearchType)){
+				SearchType = "ST." + SearchType;
 			}
 		}
 
@@ -1912,6 +1940,7 @@ public class DBConnector {
 				"S.PLCE_NAME, \n" +
 				"S.PLCE_CODE, \n" +
 				"S.PLCE_KYWD, \n" +
+				"S.PLCE_URL, \n" +
 				"M_IN.USER_IDX AS INST_USER_IDX, \n" +
 				"M_IN.USER_ID AS INST_USER_ID, \n" +
 				"DATE_FORMAT(L.INST_DT, '%Y.%m.%d (%H:%i)') AS INST_DT, \n" +
@@ -1954,6 +1983,7 @@ public class DBConnector {
 					data.put("PLCE_NAME",rs.getString("PLCE_NAME"));
 					data.put("PLCE_CODE",rs.getString("PLCE_CODE"));
 					data.put("PLCE_KYWD",rs.getString("PLCE_KYWD"));
+					data.put("PLCE_URL",rs.getString("PLCE_URL"));
 					data.put("INST_USER_IDX",rs.getInt("INST_USER_IDX"));
 					data.put("INST_USER_ID",rs.getString("INST_USER_ID"));
 					data.put("INST_DT",rs.getString("INST_DT"));
@@ -2010,6 +2040,8 @@ public class DBConnector {
 		String sql = "SELECT\n" +
 				"ST.NS_SLOT_TYPE_IDX,\n" +
 				"ST.TYPE_NAME,\n" +
+				"ST.SLOT_STTM,\n" +
+				"ST.SLOT_ENTM,\n" +
 				"ST.USE_YN,\n" +
 				"ST.INST_USER AS INST_USER_IDX,\n" +
 				"M_IN.USER_ID AS INST_USER,\n" +
@@ -2039,6 +2071,8 @@ public class DBConnector {
 					NaverShoppingSlotType result = new NaverShoppingSlotType();
 					result.setNS_SLOT_TYPE_IDX(rs.getInt("NS_SLOT_TYPE_IDX"));
 					result.setTYPE_NAME(rs.getString("TYPE_NAME"));
+					result.setSLOT_STTM(rs.getString("SLOT_STTM"));
+					result.setSLOT_ENTM(rs.getString("SLOT_ENTM"));
 					result.setUSE_YN(rs.getString("USE_YN"));
 					result.setINST_USER_IDX(rs.getInt("INST_USER_IDX"));
 					result.setINST_USER(rs.getString("INST_USER"));
@@ -2161,6 +2195,8 @@ public class DBConnector {
 		String sql = "SELECT\n" +
 				"ST.NP_SLOT_TYPE_IDX,\n" +
 				"ST.TYPE_NAME,\n" +
+				"ST.SLOT_STTM,\n" +
+				"ST.SLOT_ENTM,\n" +
 				"ST.USE_YN,\n" +
 				"ST.INST_USER AS INST_USER_IDX,\n" +
 				"M_IN.USER_ID AS INST_USER,\n" +
@@ -2190,6 +2226,8 @@ public class DBConnector {
 					NaverPlaceSlotType result = new NaverPlaceSlotType();
 					result.setNP_SLOT_TYPE_IDX(rs.getInt("NP_SLOT_TYPE_IDX"));
 					result.setTYPE_NAME(rs.getString("TYPE_NAME"));
+					result.setSLOT_STTM(rs.getString("SLOT_STTM"));
+					result.setSLOT_ENTM(rs.getString("SLOT_ENTM"));
 					result.setUSE_YN(rs.getString("USE_YN"));
 					result.setINST_USER_IDX(rs.getInt("INST_USER_IDX"));
 					result.setINST_USER(rs.getString("INST_USER"));

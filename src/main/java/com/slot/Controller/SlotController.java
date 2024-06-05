@@ -27,9 +27,9 @@ public class SlotController {
 	
 	private Member member;
 
-	/* 슬롯 추가 */
-	@RequestMapping(value="/setSlot/{UserIdx}", method=RequestMethod.POST)
-	public String SetSlot(@PathVariable("UserIdx") int UserIdx, HttpServletRequest Request, Model model) throws Exception{
+	/* 슬롯 추가 기존 사용 안함*/
+	@RequestMapping(value="/setSlotOld/{UserIdx}", method=RequestMethod.POST)
+	public String SetSlotOld(@PathVariable("UserIdx") int UserIdx, HttpServletRequest Request, Model model) throws Exception{
 		member = (Member)ContextUtil.getAttrFromSession(Protocol.Json.KEY_MEMBER);
 		if(member!=null) {
 			String USER_TYPE = Request.getParameter("USER_TYPE_SL");
@@ -103,6 +103,95 @@ public class SlotController {
 		return "redirect:/login";
 	}
 
+	/* 슬롯 추가 */
+	@ResponseBody
+	@RequestMapping(value="/setSlot", method=RequestMethod.POST, produces = "application/text; charset=UTF-8")
+	public String SetSlot(@RequestParam HashMap<String, String> param) throws Exception{
+		JSONObject jobj = new JSONObject();
+		jobj.put("code", "200");
+		jobj.put("result", false);
+		jobj.put("value", "");
+		jobj.put("alert", "추가 실패.");
+		jobj.put("url", "");
+		member = (Member)ContextUtil.getAttrFromSession(Protocol.Json.KEY_MEMBER);
+		if(member!=null) {
+			/* 업무시간 외 셧다운 주석처리 */
+			if(!"M".equals(member.getUSER_PERM()) && !Util.checkWorkingTime()){
+				jobj.put("alert", "마감시간을 확인해주세요.");
+				return jobj.toString();
+			}
+
+			if(param!=null && param.size() > 0) {
+				try {
+					JSONArray responseArray = new JSONArray();
+					String URL = "";
+
+					JSONObject jParamObject = (JSONObject)JSONValue.parse(param.get("PARAM"));
+
+					int UserIdx = Integer.parseInt((String) jParamObject.get("USER_IDX_SL"));
+
+					String SLOT_STDT = (String) jParamObject.get("SLOT_STDT_SL");
+					String SLOT_ENDT = (String) jParamObject.get("SLOT_ENDT_SL");
+					int SLOT_EA = Integer.parseInt((String) jParamObject.get("SLOT_EA_SL"));
+					int SLOT_DAYS = Integer.parseInt((String) jParamObject.get("SLOT_DAYS_SL"));
+
+					int SLOT_TYPE = 0;
+					if("M".equals(member.getUSER_PERM())||"G".equals(member.getUSER_PERM())){
+						SLOT_TYPE = Integer.parseInt((String) jParamObject.get("SLOT_TYPE_SL"));
+					}
+
+					String PAGE = (String) jParamObject.get("PAGE_SL");
+					String PARAM = (String) jParamObject.get("PARAM_SL");
+					String USER_TYPE = (String) jParamObject.get("USER_TYPE_SL");
+					if(PAGE != null && !"".equals(PAGE)){
+						URL = URL + "/" + PAGE;
+					}
+					if(PARAM != null && !"".equals(PARAM)){
+						URL = URL + PARAM;
+					}
+
+					Member m = DBConnector.getMemberList(UserIdx , 0, null, null, member.getUSER_PERM(), USER_TYPE, member.getUSER_IDX()).get(0);
+					if("M".equals(member.getUSER_PERM()) || ("G".equals(member.getUSER_PERM()) && (m.getINST_ADMN_IDX() == member.getUSER_IDX() || m.getUSER_IDX() == member.getUSER_IDX()))){
+						if(USER_TYPE.contains("NS")){
+							jParamObject.put("RESULT", "X");
+							for(int i = 0; i < SLOT_EA; i++){
+								int SLOT_IDX = DBConnector.InsertNaverShoppingSlotInfo(UserIdx, SLOT_STDT, SLOT_ENDT, member.getUSER_IDX(),SLOT_TYPE);
+								if(SLOT_IDX > 0){
+									DBConnector.InsertNaverShoppingSlotLogInfo(SLOT_IDX, SLOT_DAYS, 1, "C", member.getUSER_IP(), member.getUSER_IDX());
+									jParamObject.put("RESULT", "O");
+									jParamObject.put("MSG", "");
+								}else{
+									jParamObject.put("MSG", "DB error");
+								}
+							}
+							responseArray.add(jParamObject);
+						}else if(USER_TYPE.contains("NP")){
+							jParamObject.put("RESULT", "X");
+							for(int i = 0; i < SLOT_EA; i++){
+								int SLOT_IDX = DBConnector.InsertNaverPlaceSlotInfo(UserIdx, SLOT_STDT, SLOT_ENDT, member.getUSER_IDX(),SLOT_TYPE);
+								if(SLOT_IDX > 0){
+									DBConnector.InsertNaverPlaceSlotLogInfo(SLOT_IDX, SLOT_DAYS, 1, "C", member.getUSER_IP(), member.getUSER_IDX());
+									jParamObject.put("RESULT", "O");
+									jParamObject.put("MSG", "");
+								}else{
+									jParamObject.put("MSG", "DB error");
+								}
+							}
+							responseArray.add(jParamObject);
+						}
+					}else {
+						jParamObject.put("MSG", "DB error");
+					}
+					jobj.put("value", responseArray);
+					jobj.put("result", true);
+					jobj.put("alert", "추가 완료.");
+					jobj.put("url", URL);
+				}catch(Exception e){ e.printStackTrace(); }
+			}
+		}
+		return jobj.toString();
+	}
+
 	/* 슬롯 정보 수정 (팝업) 사용안함 */
 	@RequestMapping(value="/setSlot/{UserIdx}/{SlotIdx}", method=RequestMethod.POST)
 	public String SetSlotIdx(@PathVariable("UserIdx") int UserIdx, @PathVariable("SlotIdx") int SlotIdx, HttpServletRequest Request, Model model) throws Exception{
@@ -163,6 +252,7 @@ public class SlotController {
 		if(member!=null) {
 			/* 업무시간 외 셧다운 주석처리 */
 			if(!"M".equals(member.getUSER_PERM()) && !Util.checkWorkingTime()){
+				jobj.put("alert", "마감시간을 확인해주세요.");
 				return jobj.toString();
 			}
 
@@ -262,6 +352,7 @@ public class SlotController {
 		if(member!=null) {
 			/* 업무시간 외 셧다운 주석처리 */
 			if(!"M".equals(member.getUSER_PERM()) && !Util.checkWorkingTime()){
+				jobj.put("alert", "마감시간을 확인해주세요.");
 				return jobj.toString();
 			}
 
@@ -372,6 +463,7 @@ public class SlotController {
 		if(member!=null) {
 			/* 업무시간 외 셧다운 주석처리 */
 			if(!"M".equals(member.getUSER_PERM()) && !Util.checkWorkingTime()){
+				jobj.put("alert", "마감시간을 확인해주세요.");
 				return jobj.toString();
 			}
 
@@ -517,6 +609,7 @@ public class SlotController {
 		if(member!=null) {
 			/* 업무시간 외 셧다운 주석처리 */
 			if(!"M".equals(member.getUSER_PERM()) && !Util.checkWorkingTime()){
+				jobj.put("alert", "마감시간을 확인해주세요.");
 				return jobj.toString();
 			}
 
@@ -644,6 +737,7 @@ public class SlotController {
 		if(member!=null) {
 			/* 업무시간 외 셧다운 주석처리 */
 			if(!"M".equals(member.getUSER_PERM()) && !Util.checkWorkingTime()){
+				jobj.put("alert", "마감시간을 확인해주세요.");
 				return jobj.toString();
 			}
 
