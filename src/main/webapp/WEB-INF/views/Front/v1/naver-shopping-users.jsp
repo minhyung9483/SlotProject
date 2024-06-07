@@ -468,7 +468,7 @@
 						<input type="number" class="form-control SLOT_EA_SL" id="SLOT_EA_SL" name="SLOT_EA_SL" value="1" min="1">
 					</div>
 					<div class="mb-3">
-						<label for="SLOT_TYPE_SL" class="col-form-label">슬롯타입</label>
+						<label for="SLOT_TYPE_SL" class="col-form-label">슬롯타입(선택)</label>
 						<select class="form-select SLOT_TYPE_SL" id="SLOT_TYPE_SL" name="SLOT_TYPE_SL">
 							<%for(int i=0; i< naverShoppingSlotTypeList.size(); i++){%>
 							<option value="<%=naverShoppingSlotTypeList.get(i).getNS_SLOT_TYPE_IDX()%>"><%=naverShoppingSlotTypeList.get(i).getTYPE_NAME()%></option>

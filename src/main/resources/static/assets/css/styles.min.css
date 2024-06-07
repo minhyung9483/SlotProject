@@ -2529,7 +2529,7 @@ textarea.form-control-lg {
 }
 .form-check {
 	display:block;
-	min-height:1.188em;
+	min-height:2em;
 	padding-left:1.688em;
 	margin-bottom:0.125rem
 }
@@ -2549,8 +2549,8 @@ textarea.form-control-lg {
 }
 .form-check-input {
 	--bs-form-check-bg:transparent;
-	width:1.188em;
-	height:1.188em;
+	width:2em;
+	height:2em;
 	margin-top:0.156em;
 	vertical-align:top;
 	background-color:var(--bs-form-check-bg);

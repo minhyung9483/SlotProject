@@ -303,7 +303,7 @@
 
 								<tr>
 									<td class=""><%--체크박스--%>
-										<input type="checkbox" class="form-check-input" id="slotList<%=i%>" name="slotList" value="<%=slotList.get(i).getUSER_IDX()%>_<%=slotList.get(i).getSLOT_IDX()%>">
+										<input type="checkbox" class="form-check-input" id="slotList<%=i%>" name="slotList" value="<%=slotList.get(i).getUSER_IDX()%>_<%=slotList.get(i).getSLOT_IDX()%>_<%=slotList.get(i).getNP_SLOT_TYPE_IDX()%>">
 									</td>
 									<form id="updateNewForm<%=slotList.get(i).getSLOT_IDX()%>" name="updateNewForm">
 									<td class=""><%--번호--%>
@@ -311,6 +311,7 @@
 										<input type="hidden" id="IDX_<%=slotList.get(i).getSLOT_IDX()%>" name="IDX_<%=slotList.get(i).getSLOT_IDX()%>"  value="<%=slotList.get(i).getSLOT_IDX()%>" readonly>
 										<input type="hidden" id="PAGE_<%=slotList.get(i).getSLOT_IDX()%>" name="PAGE_<%=slotList.get(i).getSLOT_IDX()%>" value="<%=setPage%>">
 										<input type="hidden" id="PARAM_<%=slotList.get(i).getSLOT_IDX()%>" name="PARAM_<%=slotList.get(i).getSLOT_IDX()%>" value="<%=Param%>">
+										<input type="hidden" id="TYPE_IDX_<%=slotList.get(i).getSLOT_IDX()%>" name="TYPE_IDX_<%=slotList.get(i).getSLOT_IDX()%>" value="<%=slotList.get(i).getNP_SLOT_TYPE_IDX()%>">
 									</td>
 									<%if("M".equals(member.getUSER_PERM())){%>
 									<td class=""><%--상태--%>
@@ -697,6 +698,7 @@
 			let USER_IDX_SLOT_IDX = $(this).val().split('_');;
 			json.USER_IDX = USER_IDX_SLOT_IDX[0];
 			json.SLOT_IDX = USER_IDX_SLOT_IDX[1];
+			json.SLOT_TYPE = USER_IDX_SLOT_IDX[2];
 			json.PAGE = '<%=setPage%>';
 			json.PARAM = '<%=Param%>';
 			json.USER_TYPE = '<%=USER_TYPE%>';
@@ -763,9 +765,7 @@
 		json.PLCE_CODE = $("#CODE_"+SLOT_IDX_UP).val();
 		json.PLCE_KYWD = $("#KYWD_"+SLOT_IDX_UP).val();
 		json.PLCE_URL = $("#URL_"+SLOT_IDX_UP).val();
-		<%if("M".equals(member.getUSER_PERM())){%>
-		json.SLOT_TYPE = $("#TYPE_"+SLOT_IDX_UP).val();
-		<%}%>
+		json.SLOT_TYPE = $("#TYPE_IDX_"+SLOT_IDX_UP).val();
 		json.PAGE = '<%=setPage%>';
 		json.PARAM = '<%=Param%>';
 		json.USER_TYPE = '<%=USER_TYPE%>';
@@ -827,6 +827,7 @@
 			json.PLCE_CODE = $("#CODE_"+USER_IDX_SLOT_IDX[1]).val();
 			json.PLCE_KYWD = $("#KYWD_"+USER_IDX_SLOT_IDX[1]).val();
 			json.PLCE_URL = $("#URL_"+USER_IDX_SLOT_IDX[1]).val();
+			json.SLOT_TYPE = USER_IDX_SLOT_IDX[2];
 			json.PAGE = '<%=setPage%>';
 			json.PARAM = '<%=Param%>';
 			json.USER_TYPE = '<%=USER_TYPE%>';
@@ -886,6 +887,7 @@
 			json.PLCE_CODE = $("#PLCE_CODE_UPS").val();
 			json.PLCE_KYWD = $("#PLCE_KYWD_UPS").val();
 			json.PLCE_URL = $("#PLCE_URL_UPS").val();
+			json.SLOT_TYPE = USER_IDX_SLOT_IDX[2];
 			json.PAGE = '<%=setPage%>';
 			json.PARAM = '<%=Param%>';
 			json.USER_TYPE = '<%=USER_TYPE%>';
@@ -942,6 +944,7 @@
 			json.USER_IDX = USER_IDX_SLOT_IDX[0];
 			json.SLOT_IDX = USER_IDX_SLOT_IDX[1];
 			json.SLOT_DAYS = $("#SLOT_DAYS_EX").val();
+			json.SLOT_TYPE = USER_IDX_SLOT_IDX[2];
 			json.PAGE = '<%=setPage%>';
 			json.PARAM = '<%=Param%>';
 			json.USER_TYPE = '<%=USER_TYPE%>';
@@ -997,6 +1000,7 @@
 			let USER_IDX_SLOT_IDX = $(this).val().split('_');;
 			json.USER_IDX = USER_IDX_SLOT_IDX[0];
 			json.SLOT_IDX = USER_IDX_SLOT_IDX[1];
+			json.SLOT_TYPE = USER_IDX_SLOT_IDX[2];
 			json.PAGE = '<%=setPage%>';
 			json.PARAM = '<%=Param%>';
 			json.USER_TYPE = '<%=USER_TYPE%>';

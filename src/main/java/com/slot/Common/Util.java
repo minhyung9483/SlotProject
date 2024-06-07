@@ -413,6 +413,71 @@ public class Util {
 		return result;
 	}
 
+	public static boolean checkShutDownTimeByName(String USER_TYPE, String SLOT_TYPE){
+		boolean result = true;
+		member = (Member)ContextUtil.getAttrFromSession(Protocol.Json.KEY_MEMBER);
+
+		mCalendar = Calendar.getInstance();
+		curHour = mCalendar.get(Calendar.HOUR_OF_DAY);
+		curMinute = mCalendar. get(Calendar.MINUTE);
+
+		if(USER_TYPE.contains("NS")){
+			NaverShoppingSlotType naverShoppingSlotType = DBConnector.getNaverShoppingSlotTypeByName(SLOT_TYPE,"Y").get(0);
+
+			String curTime = (Integer.toString(curHour).length()==1? "0" + curHour : curHour)  + "" +	(Integer.toString(curMinute).length()==1? "0" + curMinute : curMinute);
+			String curStatus = "근무시간";
+			if(Integer.parseInt(curTime) >= Integer.parseInt(naverShoppingSlotType.getSLOT_ENTM().toString())){
+				result = false;
+				curStatus = "근무시간 지남";
+			}else if(Integer.parseInt(curTime) < Integer.parseInt(naverShoppingSlotType.getSLOT_STTM().toString())){
+				result = false;
+				curStatus = "근무시간 전";
+			}
+			if(result){
+				Logger.LogOn(false);
+			}else{
+				Logger.LogOn(true);
+			}
+			Logger.Info(TAG, "==========================");
+			Logger.Info(TAG, "현재시간 : " + curTime);
+			Logger.Info(TAG, "시작시간 : " + Integer.parseInt(naverShoppingSlotType.getSLOT_STTM().toString()));
+			Logger.Info(TAG, "종료시간 : " + Integer.parseInt(naverShoppingSlotType.getSLOT_ENTM().toString()));
+			Logger.Info(TAG, "현재상태 : " + curStatus);
+			Logger.Info(TAG, "워킹타임 : " + result);
+			Logger.Info(TAG, "요청자 : " + member.getUSER_ID());
+			Logger.Info(TAG, "요청IP : " + member.getUSER_IP());
+			Logger.Info(TAG, "==========================");
+		}else if(USER_TYPE.contains("NP")){
+			NaverPlaceSlotType naverPlaceSlotType = DBConnector.getNaverPlaceSlotTypeByName(SLOT_TYPE,"Y").get(0);
+
+			String curTime = (Integer.toString(curHour).length()==1? "0" + curHour : curHour)  + "" +	(Integer.toString(curMinute).length()==1? "0" + curMinute : curMinute);
+			String curStatus = "근무시간";
+			if(Integer.parseInt(curTime) >= Integer.parseInt(naverPlaceSlotType.getSLOT_ENTM().toString())){
+				result = false;
+				curStatus = "근무시간 지남";
+			}else if(Integer.parseInt(curTime) < Integer.parseInt(naverPlaceSlotType.getSLOT_STTM().toString())){
+				result = false;
+				curStatus = "근무시간 전";
+			}
+			if(result){
+				Logger.LogOn(false);
+			}else{
+				Logger.LogOn(true);
+			}
+			Logger.Info(TAG, "==========================");
+			Logger.Info(TAG, "현재시간 : " + curTime);
+			Logger.Info(TAG, "시작시간 : " + Integer.parseInt(naverPlaceSlotType.getSLOT_STTM().toString()));
+			Logger.Info(TAG, "종료시간 : " + Integer.parseInt(naverPlaceSlotType.getSLOT_ENTM().toString()));
+			Logger.Info(TAG, "현재상태 : " + curStatus);
+			Logger.Info(TAG, "워킹타임 : " + result);
+			Logger.Info(TAG, "요청자 : " + member.getUSER_ID());
+			Logger.Info(TAG, "요청IP : " + member.getUSER_IP());
+			Logger.Info(TAG, "==========================");
+		}
+
+		return result;
+	}
+
 	public static String encodeKorean(String url){
 		// StringBuilder를 사용하여 결과를 만듭니다.
 		StringBuilder result = new StringBuilder();

@@ -102,7 +102,7 @@
 											//////////////////////////////////////
 											String[] Title;
 
-											Title = new String[]{"슬롯타입코드", "슬롯타입", "수정", "삭제"};
+											Title = new String[]{"슬롯타입코드", "슬롯타입", "시작시간", "종료시간", "수정", "삭제"};
 
 
 											for(int i=0;i<Title.length;i++){
@@ -125,8 +125,14 @@
 											<td class=""><%--슬롯타입--%>
 												<input type="text" class="form-control-plaintext text-center" value="<%=naverShoppingSlotTypeList.get(i).getTYPE_NAME()%>" readonly>
 											</td>
+											<td class=""><%--시작시간--%>
+												<input type="text" class="form-control-plaintext text-center" value="<%=naverShoppingSlotTypeList.get(i).getSLOT_STTM().substring(0,2)+":"+naverShoppingSlotTypeList.get(i).getSLOT_STTM().substring(2)%>" readonly>
+											</td>
+											<td class=""><%--종료시간--%>
+												<input type="text" class="form-control-plaintext text-center" value="<%=naverShoppingSlotTypeList.get(i).getSLOT_ENTM().substring(0,2)+":"+naverShoppingSlotTypeList.get(i).getSLOT_ENTM().substring(2)%>" readonly>
+											</td>
 											<td class=""><%--종료일--%> <%--종료일 3일전부터 빨개짐--%>
-												<a class="text-body cursor-pointer" data-bs-toggle="modal" data-bs-target="#naverShoppingUpdateModal" data-bs-idx="<%=naverShoppingSlotTypeList.get(i).getNS_SLOT_TYPE_IDX()%>" data-bs-name="<%=naverShoppingSlotTypeList.get(i).getTYPE_NAME()%>">
+												<a class="text-body cursor-pointer" data-bs-toggle="modal" data-bs-target="#naverShoppingUpdateModal" data-bs-idx="<%=naverShoppingSlotTypeList.get(i).getNS_SLOT_TYPE_IDX()%>" data-bs-name="<%=naverShoppingSlotTypeList.get(i).getTYPE_NAME()%>" data-bs-sttm="<%=naverShoppingSlotTypeList.get(i).getSLOT_STTM()%>" data-bs-entm="<%=naverShoppingSlotTypeList.get(i).getSLOT_ENTM()%>">
 											<span>
 												<i class="ti ti-edit fs-6"></i>
 											</span>
@@ -191,7 +197,7 @@
 											//////////////////////////////////////
 											String[] Title;
 
-											Title = new String[]{"슬롯타입코드", "슬롯타입", "수정", "삭제"};
+											Title = new String[]{"슬롯타입코드", "슬롯타입", "시작시간", "종료시간", "수정", "삭제"};
 
 
 											for(int i=0;i<Title.length;i++){
@@ -214,8 +220,14 @@
 											<td class=""><%--슬롯타입--%>
 												<input type="text" class="form-control-plaintext text-center" value="<%=naverPlaceSlotTypeList.get(i).getTYPE_NAME()%>" readonly>
 											</td>
+											<td class=""><%--시작시간--%>
+												<input type="text" class="form-control-plaintext text-center" value="<%=naverPlaceSlotTypeList.get(i).getSLOT_STTM().substring(0,2)+":"+naverPlaceSlotTypeList.get(i).getSLOT_STTM().substring(2)%>" readonly>
+											</td>
+											<td class=""><%--종료시간--%>
+												<input type="text" class="form-control-plaintext text-center" value="<%=naverPlaceSlotTypeList.get(i).getSLOT_ENTM().substring(0,2)+":"+naverPlaceSlotTypeList.get(i).getSLOT_ENTM().substring(2)%>" readonly>
+											</td>
 											<td class=""><%--종료일--%> <%--종료일 3일전부터 빨개짐--%>
-												<a class="text-body cursor-pointer" data-bs-toggle="modal" data-bs-target="#naverPlaceUpdateModal" data-bs-idx="<%=naverPlaceSlotTypeList.get(i).getNP_SLOT_TYPE_IDX()%>" data-bs-name="<%=naverPlaceSlotTypeList.get(i).getTYPE_NAME()%>">
+												<a class="text-body cursor-pointer" data-bs-toggle="modal" data-bs-target="#naverPlaceUpdateModal" data-bs-idx="<%=naverPlaceSlotTypeList.get(i).getNP_SLOT_TYPE_IDX()%>" data-bs-name="<%=naverPlaceSlotTypeList.get(i).getTYPE_NAME()%>" data-bs-sttm="<%=naverPlaceSlotTypeList.get(i).getSLOT_STTM()%>" data-bs-entm="<%=naverPlaceSlotTypeList.get(i).getSLOT_ENTM()%>">
 										<span>
 											<i class="ti ti-edit fs-6"></i>
 										</span>
@@ -263,6 +275,50 @@
 						<label for="NS_TYPE_NAME_IN" class="col-form-label">네이버 쇼핑 슬롯타입</label>
 						<input type="text" class="form-control NS_TYPE_NAME_IN" id="NS_TYPE_NAME_IN" name="NS_TYPE_NAME_IN">
 					</div>
+					<div class="mb-3">
+						<label for="NS_SLOT_STTM_H_IN" class="col-form-label">시작시간</label>
+						<div class="row">
+							<div class="col-lg-3">
+								<select class="form-select NS_SLOT_STTM_H_IN" id="NS_SLOT_STTM_H_IN" name="NS_SLOT_STTM_H_IN">
+									<%for(int i=0; i<24; i++){%>
+									<option value="<%=Integer.toString(i).length()==2?Integer.toString(i):"0"+Integer.toString(i)%>"><%=Integer.toString(i).length()==2?Integer.toString(i):"0"+Integer.toString(i)%></option>
+									<%}%>
+								</select>
+							</div>
+							<div class="col-lg-1">
+								<input input type="text" class="form-control-plaintext text-center" value=":" readonly>
+							</div>
+							<div class="col-lg-3">
+								<select class="form-select NS_SLOT_STTM_M_IN" id="NS_SLOT_STTM_M_IN" name="NS_SLOT_STTM_M_IN">
+									<%for(int i=0; i<60; i+=30){%>
+									<option value="<%=Integer.toString(i).length()==2?Integer.toString(i):"0"+Integer.toString(i)%>"><%=Integer.toString(i).length()==2?Integer.toString(i):"0"+Integer.toString(i)%></option>
+									<%}%>
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="mb-3">
+						<label for="NS_SLOT_ENTM_H_IN" class="col-form-label">종료시간</label>
+						<div class="row">
+							<div class="col-lg-3">
+								<select class="form-select NS_SLOT_ENTM_H_IN" id="NS_SLOT_ENTM_H_IN" name="NS_SLOT_ENTM_H_IN">
+									<%for(int i=0; i<24; i++){%>
+									<option value="<%=Integer.toString(i).length()==2?Integer.toString(i):"0"+Integer.toString(i)%>"><%=Integer.toString(i).length()==2?Integer.toString(i):"0"+Integer.toString(i)%></option>
+									<%}%>
+								</select>
+							</div>
+							<div class="col-lg-1">
+								<input input type="text" class="form-control-plaintext text-center" value=":" readonly>
+							</div>
+							<div class="col-lg-3">
+								<select class="form-select NS_SLOT_ENTM_M_IN" id="NS_SLOT_ENTM_M_IN" name="NS_SLOT_ENTM_M_IN">
+									<%for(int i=0; i<60; i+=30){%>
+									<option value="<%=Integer.toString(i).length()==2?Integer.toString(i):"0"+Integer.toString(i)%>"><%=Integer.toString(i).length()==2?Integer.toString(i):"0"+Integer.toString(i)%></option>
+									<%}%>
+								</select>
+							</div>
+						</div>
+					</div>
 				</form>
 			</div>
 			<div class="modal-footer justify-content-center">
@@ -287,6 +343,50 @@
 					<div class="mb-3">
 						<label for="NS_TYPE_NAME_UP" class="col-form-label">네이버 쇼핑 슬롯타입</label>
 						<input type="text" class="form-control NS_TYPE_NAME_UP" id="NS_TYPE_NAME_UP" name="NS_TYPE_NAME_UP">
+					</div>
+					<div class="mb-3">
+						<label for="NS_SLOT_STTM_H_UP" class="col-form-label">시작시간</label>
+						<div class="row">
+							<div class="col-lg-3">
+								<select class="form-select NS_SLOT_STTM_H_UP" id="NS_SLOT_STTM_H_UP" name="NS_SLOT_STTM_H_UP">
+									<%for(int i=0; i<24; i++){%>
+									<option value="<%=Integer.toString(i).length()==2?Integer.toString(i):"0"+Integer.toString(i)%>"><%=Integer.toString(i).length()==2?Integer.toString(i):"0"+Integer.toString(i)%></option>
+									<%}%>
+								</select>
+							</div>
+							<div class="col-lg-1">
+								<input input type="text" class="form-control-plaintext text-center" value=":" readonly>
+							</div>
+							<div class="col-lg-3">
+								<select class="form-select NS_SLOT_STTM_M_UP" id="NS_SLOT_STTM_M_UP" name="NS_SLOT_STTM_M_UP">
+									<%for(int i=0; i<60; i+=30){%>
+									<option value="<%=Integer.toString(i).length()==2?Integer.toString(i):"0"+Integer.toString(i)%>"><%=Integer.toString(i).length()==2?Integer.toString(i):"0"+Integer.toString(i)%></option>
+									<%}%>
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="mb-3">
+						<label for="NS_SLOT_ENTM_H_UP" class="col-form-label">종료시간</label>
+						<div class="row">
+							<div class="col-lg-3">
+								<select class="form-select NS_SLOT_ENTM_H_UP" id="NS_SLOT_ENTM_H_UP" name="NS_SLOT_ENTM_H_UP">
+									<%for(int i=0; i<24; i++){%>
+									<option value="<%=Integer.toString(i).length()==2?Integer.toString(i):"0"+Integer.toString(i)%>"><%=Integer.toString(i).length()==2?Integer.toString(i):"0"+Integer.toString(i)%></option>
+									<%}%>
+								</select>
+							</div>
+							<div class="col-lg-1">
+								<input input type="text" class="form-control-plaintext text-center" value=":" readonly>
+							</div>
+							<div class="col-lg-3">
+								<select class="form-select NS_SLOT_ENTM_M_UP" id="NS_SLOT_ENTM_M_UP" name="NS_SLOT_ENTM_M_UP">
+									<%for(int i=0; i<60; i+=30){%>
+									<option value="<%=Integer.toString(i).length()==2?Integer.toString(i):"0"+Integer.toString(i)%>"><%=Integer.toString(i).length()==2?Integer.toString(i):"0"+Integer.toString(i)%></option>
+									<%}%>
+								</select>
+							</div>
+						</div>
 					</div>
 				</form>
 			</div>
@@ -314,6 +414,50 @@
 						<label for="NP_TYPE_NAME_IN" class="col-form-label">네이버 플레이스 슬롯타입</label>
 						<input type="text" class="form-control NP_TYPE_NAME_IN" id="NP_TYPE_NAME_IN" name="NP_TYPE_NAME_IN">
 					</div>
+					<div class="mb-3">
+						<label for="NP_SLOT_STTM_H_IN" class="col-form-label">시작시간</label>
+						<div class="row">
+							<div class="col-lg-3">
+								<select class="form-select NP_SLOT_STTM_H_IN" id="NP_SLOT_STTM_H_IN" name="NP_SLOT_STTM_H_IN">
+									<%for(int i=0; i<24; i++){%>
+									<option value="<%=Integer.toString(i).length()==2?Integer.toString(i):"0"+Integer.toString(i)%>"><%=Integer.toString(i).length()==2?Integer.toString(i):"0"+Integer.toString(i)%></option>
+									<%}%>
+								</select>
+							</div>
+							<div class="col-lg-1">
+								<input input type="text" class="form-control-plaintext text-center" value=":" readonly>
+							</div>
+							<div class="col-lg-3">
+								<select class="form-select NP_SLOT_STTM_M_IN" id="NP_SLOT_STTM_M_IN" name="NP_SLOT_STTM_M_IN">
+									<%for(int i=0; i<60; i+=30){%>
+									<option value="<%=Integer.toString(i).length()==2?Integer.toString(i):"0"+Integer.toString(i)%>"><%=Integer.toString(i).length()==2?Integer.toString(i):"0"+Integer.toString(i)%></option>
+									<%}%>
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="mb-3">
+						<label for="NP_SLOT_ENTM_H_IN" class="col-form-label">종료시간</label>
+						<div class="row">
+							<div class="col-lg-3">
+								<select class="form-select NP_SLOT_ENTM_H_IN" id="NP_SLOT_ENTM_H_IN" name="NP_SLOT_ENTM_H_IN">
+									<%for(int i=0; i<24; i++){%>
+									<option value="<%=Integer.toString(i).length()==2?Integer.toString(i):"0"+Integer.toString(i)%>"><%=Integer.toString(i).length()==2?Integer.toString(i):"0"+Integer.toString(i)%></option>
+									<%}%>
+								</select>
+							</div>
+							<div class="col-lg-1">
+								<input input type="text" class="form-control-plaintext text-center" value=":" readonly>
+							</div>
+							<div class="col-lg-3">
+								<select class="form-select NP_SLOT_ENTM_M_IN" id="NP_SLOT_ENTM_M_IN" name="NP_SLOT_ENTM_M_IN">
+									<%for(int i=0; i<60; i+=30){%>
+									<option value="<%=Integer.toString(i).length()==2?Integer.toString(i):"0"+Integer.toString(i)%>"><%=Integer.toString(i).length()==2?Integer.toString(i):"0"+Integer.toString(i)%></option>
+									<%}%>
+								</select>
+							</div>
+						</div>
+					</div>
 				</form>
 			</div>
 			<div class="modal-footer justify-content-center">
@@ -338,6 +482,50 @@
 					<div class="mb-3">
 						<label for="NP_TYPE_NAME_UP" class="col-form-label">네이버 플레이스 슬롯타입</label>
 						<input type="text" class="form-control NP_TYPE_NAME_UP" id="NP_TYPE_NAME_UP" name="NP_TYPE_NAME_UP">
+					</div>
+					<div class="mb-3">
+						<label for="NP_SLOT_STTM_H_UP" class="col-form-label">시작시간</label>
+						<div class="row">
+							<div class="col-lg-3">
+								<select class="form-select NP_SLOT_STTM_H_UP" id="NP_SLOT_STTM_H_UP" name="NP_SLOT_STTM_H_UP">
+									<%for(int i=0; i<24; i++){%>
+									<option value="<%=Integer.toString(i).length()==2?Integer.toString(i):"0"+Integer.toString(i)%>"><%=Integer.toString(i).length()==2?Integer.toString(i):"0"+Integer.toString(i)%></option>
+									<%}%>
+								</select>
+							</div>
+							<div class="col-lg-1">
+								<input input type="text" class="form-control-plaintext text-center" value=":" readonly>
+							</div>
+							<div class="col-lg-3">
+								<select class="form-select NP_SLOT_STTM_M_UP" id="NP_SLOT_STTM_M_UP" name="NP_SLOT_STTM_M_UP">
+									<%for(int i=0; i<60; i+=30){%>
+									<option value="<%=Integer.toString(i).length()==2?Integer.toString(i):"0"+Integer.toString(i)%>"><%=Integer.toString(i).length()==2?Integer.toString(i):"0"+Integer.toString(i)%></option>
+									<%}%>
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="mb-3">
+						<label for="NP_SLOT_ENTM_H_UP" class="col-form-label">종료시간</label>
+						<div class="row">
+							<div class="col-lg-3">
+								<select class="form-select NP_SLOT_ENTM_H_UP" id="NP_SLOT_ENTM_H_UP" name="NP_SLOT_ENTM_H_UP">
+									<%for(int i=0; i<24; i++){%>
+									<option value="<%=Integer.toString(i).length()==2?Integer.toString(i):"0"+Integer.toString(i)%>"><%=Integer.toString(i).length()==2?Integer.toString(i):"0"+Integer.toString(i)%></option>
+									<%}%>
+								</select>
+							</div>
+							<div class="col-lg-1">
+								<input input type="text" class="form-control-plaintext text-center" value=":" readonly>
+							</div>
+							<div class="col-lg-3">
+								<select class="form-select NP_SLOT_ENTM_M_UP" id="NP_SLOT_ENTM_M_UP" name="NP_SLOT_ENTM_M_UP">
+									<%for(int i=0; i<60; i+=30){%>
+									<option value="<%=Integer.toString(i).length()==2?Integer.toString(i):"0"+Integer.toString(i)%>"><%=Integer.toString(i).length()==2?Integer.toString(i):"0"+Integer.toString(i)%></option>
+									<%}%>
+								</select>
+							</div>
+						</div>
 					</div>
 				</form>
 			</div>
@@ -376,15 +564,26 @@
 		// Extract info from data-bs-* attributes
 		var NS_SLOT_TYPE_IDX = button.getAttribute('data-bs-idx');
 		var NS_TYPE_NAME = button.getAttribute('data-bs-name');
+		var NS_SLOT_STTM = button.getAttribute('data-bs-sttm');
+		var NS_SLOT_ENTM = button.getAttribute('data-bs-entm');
 
 		// var modalTitle = naverShoppingUpdateModal.querySelector('.modal-title');
 		var NS_SLOT_TYPE_IDXInput = naverShoppingUpdateModal.querySelector('.modal-body .NS_SLOT_TYPE_IDX_UP');
 		var NS_TYPE_NAMEInput = naverShoppingUpdateModal.querySelector('.modal-body .NS_TYPE_NAME_UP');
 		var USER_PWDInput = naverShoppingUpdateModal.querySelector('.modal-body .USER_PWD_UP');
 
+		var NS_SLOT_STTM_H_UPInput = naverShoppingUpdateModal.querySelector('.modal-body .NS_SLOT_STTM_H_UP');
+		var NS_SLOT_STTM_M_UPInput = naverShoppingUpdateModal.querySelector('.modal-body .NS_SLOT_STTM_M_UP');
+		var NS_SLOT_ENTM_H_UPInput = naverShoppingUpdateModal.querySelector('.modal-body .NS_SLOT_ENTM_H_UP');
+		var NS_SLOT_ENTM_M_UPInput = naverShoppingUpdateModal.querySelector('.modal-body .NS_SLOT_ENTM_M_UP');
+
 		// modalTitle.textContent = NS_TYPE_NAME;
 		NS_SLOT_TYPE_IDXInput.value = NS_SLOT_TYPE_IDX;
 		NS_TYPE_NAMEInput.value = NS_TYPE_NAME;
+		NS_SLOT_STTM_H_UPInput.value = NS_SLOT_STTM.substring(0,2);
+		NS_SLOT_STTM_M_UPInput.value = NS_SLOT_STTM.substring(2,4);
+		NS_SLOT_ENTM_H_UPInput.value = NS_SLOT_ENTM.substring(0,2);
+		NS_SLOT_ENTM_M_UPInput.value = NS_SLOT_ENTM.substring(2,4);
 
 	});
 	/* 네이버 쇼핑 수정 모달 끝 */
@@ -410,15 +609,26 @@
 		// Extract info from data-bs-* attributes
 		var NP_SLOT_TYPE_IDX = button.getAttribute('data-bs-idx');
 		var NP_TYPE_NAME = button.getAttribute('data-bs-name');
+		var NP_SLOT_STTM = button.getAttribute('data-bs-sttm');
+		var NP_SLOT_ENTM = button.getAttribute('data-bs-entm');
 
 		// var modalTitle = naverPlaceUpdateModal.querySelector('.modal-title');
 		var NP_SLOT_TYPE_IDXInput = naverPlaceUpdateModal.querySelector('.modal-body .NP_SLOT_TYPE_IDX_UP');
 		var NP_TYPE_NAMEInput = naverPlaceUpdateModal.querySelector('.modal-body .NP_TYPE_NAME_UP');
 		var USER_PWDInput = naverPlaceUpdateModal.querySelector('.modal-body .USER_PWD_UP');
 
+		var NP_SLOT_STTM_H_UPInput = naverPlaceUpdateModal.querySelector('.modal-body .NP_SLOT_STTM_H_UP');
+		var NP_SLOT_STTM_M_UPInput = naverPlaceUpdateModal.querySelector('.modal-body .NP_SLOT_STTM_M_UP');
+		var NP_SLOT_ENTM_H_UPInput = naverPlaceUpdateModal.querySelector('.modal-body .NP_SLOT_ENTM_H_UP');
+		var NP_SLOT_ENTM_M_UPInput = naverPlaceUpdateModal.querySelector('.modal-body .NP_SLOT_ENTM_M_UP');
+
 		// modalTitle.textContent = NP_TYPE_NAME;
 		NP_SLOT_TYPE_IDXInput.value = NP_SLOT_TYPE_IDX;
 		NP_TYPE_NAMEInput.value = NP_TYPE_NAME;
+		NP_SLOT_STTM_H_UPInput.value = NP_SLOT_STTM.substring(0,2);
+		NP_SLOT_STTM_M_UPInput.value = NP_SLOT_STTM.substring(2,4);
+		NP_SLOT_ENTM_H_UPInput.value = NP_SLOT_ENTM.substring(0,2);
+		NP_SLOT_ENTM_M_UPInput.value = NP_SLOT_ENTM.substring(2,4);
 
 	});
 	/* 네이버 플레이스 수정 모달 끝 */

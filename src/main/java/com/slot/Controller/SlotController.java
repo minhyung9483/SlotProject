@@ -116,10 +116,10 @@ public class SlotController {
 		member = (Member)ContextUtil.getAttrFromSession(Protocol.Json.KEY_MEMBER);
 		if(member!=null) {
 			/* 업무시간 외 셧다운 주석처리 */
-			if(!"M".equals(member.getUSER_PERM()) && !Util.checkWorkingTime()){
+			/*if(!"M".equals(member.getUSER_PERM()) && !Util.checkWorkingTime()){
 				jobj.put("alert", "마감시간을 확인해주세요.");
 				return jobj.toString();
-			}
+			}*/
 
 			if(param!=null && param.size() > 0) {
 				try {
@@ -148,6 +148,12 @@ public class SlotController {
 					}
 					if(PARAM != null && !"".equals(PARAM)){
 						URL = URL + PARAM;
+					}
+
+					if(!"M".equals(member.getUSER_PERM()) && !Util.checkShutDownTime(USER_TYPE,SLOT_TYPE)){
+						jobj.put("alert", "마감시간을 확인해주세요.");
+						jobj.put("url", URL);
+						return jobj.toString();
 					}
 
 					Member m = DBConnector.getMemberList(UserIdx , 0, null, null, member.getUSER_PERM(), USER_TYPE, member.getUSER_IDX()).get(0);
@@ -251,10 +257,10 @@ public class SlotController {
 		member = (Member)ContextUtil.getAttrFromSession(Protocol.Json.KEY_MEMBER);
 		if(member!=null) {
 			/* 업무시간 외 셧다운 주석처리 */
-			if(!"M".equals(member.getUSER_PERM()) && !Util.checkWorkingTime()){
+			/*if(!"M".equals(member.getUSER_PERM()) && !Util.checkWorkingTime()){
 				jobj.put("alert", "마감시간을 확인해주세요.");
 				return jobj.toString();
-			}
+			}*/
 
 			if(param!=null && param.size() > 0) {
 				try {
@@ -269,11 +275,18 @@ public class SlotController {
 					String PAGE = (String) jParamObject.get("PAGE");
 					String PARAM = (String) jParamObject.get("PARAM");
 					String USER_TYPE = (String) jParamObject.get("USER_TYPE");
+					int SLOT_TYPE = Integer.parseInt((String) jParamObject.get("SLOT_TYPE"));
 					if(PAGE != null && !"".equals(PAGE)){
 						URL = URL + "/" + PAGE;
 					}
 					if(PARAM != null && !"".equals(PARAM)){
 						URL = URL + PARAM;
+					}
+
+					if(!"M".equals(member.getUSER_PERM()) && !Util.checkShutDownTime(USER_TYPE,SLOT_TYPE)){
+						jobj.put("alert", "마감시간을 확인해주세요.");
+						jobj.put("url", URL);
+						return jobj.toString();
 					}
 
 					if(USER_TYPE.contains("NS")){
@@ -339,7 +352,7 @@ public class SlotController {
 
 	/* 선택된 슬롯 수정 */
 	@ResponseBody
-//	@PostMapping("/updateSlot")
+//	@PostMapping("/updatesSlot")
 	@RequestMapping(value="/updateSlot", method=RequestMethod.POST, produces = "application/text; charset=UTF-8")
 	public String UpdateSlot(@RequestParam HashMap<String, String> param) {
 		JSONObject jobj = new JSONObject();
@@ -351,10 +364,10 @@ public class SlotController {
 		member = (Member)ContextUtil.getAttrFromSession(Protocol.Json.KEY_MEMBER);
 		if(member!=null) {
 			/* 업무시간 외 셧다운 주석처리 */
-			if(!"M".equals(member.getUSER_PERM()) && !Util.checkWorkingTime()){
+			/*if(!"M".equals(member.getUSER_PERM()) && !Util.checkWorkingTime()){
 				jobj.put("alert", "마감시간을 확인해주세요.");
 				return jobj.toString();
-			}
+			}*/
 
 			if(param!=null && param.size() > 0) {
 				try {
@@ -363,6 +376,29 @@ public class SlotController {
 					int success = 0;
 					int fail = 0;
 					String URL = "";
+
+					for(int i=0;i<jParamArray.size();i++){
+						String  BACK_URL = "";
+
+						JSONObject jParamObject = (JSONObject)jParamArray.get(i);
+
+						String PAGE = (String) jParamObject.get("PAGE");
+						String PARAM = (String) jParamObject.get("PARAM");
+						String USER_TYPE = (String) jParamObject.get("USER_TYPE");
+						int SLOT_TYPE = Integer.parseInt((String) jParamObject.get("SLOT_TYPE"));
+						if(PAGE != null && !"".equals(PAGE)){
+							 BACK_URL =  BACK_URL + "/" + PAGE;
+						}
+						if(PARAM != null && !"".equals(PARAM)){
+							 BACK_URL =  BACK_URL + PARAM;
+						}
+
+						if(!"M".equals(member.getUSER_PERM()) && !Util.checkShutDownTime(USER_TYPE,SLOT_TYPE)){
+							jobj.put("alert", "마감시간을 확인해주세요.");
+							jobj.put("url",  BACK_URL);
+							return jobj.toString();
+						}
+					}
 
 					for(int i=0;i<jParamArray.size();i++){
 						JSONObject jParamObject = (JSONObject)jParamArray.get(i);
@@ -462,10 +498,10 @@ public class SlotController {
 		member = (Member)ContextUtil.getAttrFromSession(Protocol.Json.KEY_MEMBER);
 		if(member!=null) {
 			/* 업무시간 외 셧다운 주석처리 */
-			if(!"M".equals(member.getUSER_PERM()) && !Util.checkWorkingTime()){
+			/*if(!"M".equals(member.getUSER_PERM()) && !Util.checkWorkingTime()){
 				jobj.put("alert", "마감시간을 확인해주세요.");
 				return jobj.toString();
-			}
+			}*/
 
 			if(param!=null && param.size() > 0) {
 				try {
@@ -474,6 +510,29 @@ public class SlotController {
 					int success = 0;
 					int fail = 0;
 					String URL = "";
+
+					for(int i=0;i<jParamArray.size();i++){
+						String  BACK_URL = "";
+
+						JSONObject jParamObject = (JSONObject)jParamArray.get(i);
+
+						String PAGE = (String) jParamObject.get("PAGE");
+						String PARAM = (String) jParamObject.get("PARAM");
+						String USER_TYPE = (String) jParamObject.get("USER_TYPE");
+						int SLOT_TYPE = Integer.parseInt((String) jParamObject.get("SLOT_TYPE"));
+						if(PAGE != null && !"".equals(PAGE)){
+							BACK_URL =  BACK_URL + "/" + PAGE;
+						}
+						if(PARAM != null && !"".equals(PARAM)){
+							BACK_URL =  BACK_URL + PARAM;
+						}
+
+						if(!"M".equals(member.getUSER_PERM()) && !Util.checkShutDownTime(USER_TYPE,SLOT_TYPE)){
+							jobj.put("alert", "마감시간을 확인해주세요.");
+							jobj.put("url",  BACK_URL);
+							return jobj.toString();
+						}
+					}
 
 					for(int i=0;i<jParamArray.size();i++){
 						JSONObject jParamObject = (JSONObject)jParamArray.get(i);
@@ -608,10 +667,10 @@ public class SlotController {
 		member = (Member)ContextUtil.getAttrFromSession(Protocol.Json.KEY_MEMBER);
 		if(member!=null) {
 			/* 업무시간 외 셧다운 주석처리 */
-			if(!"M".equals(member.getUSER_PERM()) && !Util.checkWorkingTime()){
+			/*if(!"M".equals(member.getUSER_PERM()) && !Util.checkWorkingTime()){
 				jobj.put("alert", "마감시간을 확인해주세요.");
 				return jobj.toString();
-			}
+			}*/
 
 			if(param!=null && param.size() > 0) {
 				try {
@@ -620,6 +679,29 @@ public class SlotController {
 					int success = 0;
 					int fail = 0;
 					String URL = "";
+
+					for(int i=0;i<jParamArray.size();i++){
+						String  BACK_URL = "";
+
+						JSONObject jParamObject = (JSONObject)jParamArray.get(i);
+
+						String PAGE = (String) jParamObject.get("PAGE");
+						String PARAM = (String) jParamObject.get("PARAM");
+						String USER_TYPE = (String) jParamObject.get("USER_TYPE");
+						int SLOT_TYPE = Integer.parseInt((String) jParamObject.get("SLOT_TYPE"));
+						if(PAGE != null && !"".equals(PAGE)){
+							 BACK_URL =  BACK_URL + "/" + PAGE;
+						}
+						if(PARAM != null && !"".equals(PARAM)){
+							 BACK_URL =  BACK_URL + PARAM;
+						}
+
+						if(!"M".equals(member.getUSER_PERM()) && !Util.checkShutDownTime(USER_TYPE,SLOT_TYPE)){
+							jobj.put("alert", "마감시간을 확인해주세요.");
+							jobj.put("url",  BACK_URL);
+							return jobj.toString();
+						}
+					}
 
 					for(int i=0;i<jParamArray.size();i++){
 						JSONObject jParamObject = (JSONObject)jParamArray.get(i);
@@ -736,10 +818,10 @@ public class SlotController {
 		member = (Member)ContextUtil.getAttrFromSession(Protocol.Json.KEY_MEMBER);
 		if(member!=null) {
 			/* 업무시간 외 셧다운 주석처리 */
-			if(!"M".equals(member.getUSER_PERM()) && !Util.checkWorkingTime()){
+			/*if(!"M".equals(member.getUSER_PERM()) && !Util.checkWorkingTime()){
 				jobj.put("alert", "마감시간을 확인해주세요.");
 				return jobj.toString();
-			}
+			}*/
 
 			if(param!=null && param.size() > 0) {
 				try {
@@ -748,6 +830,29 @@ public class SlotController {
 					int success = 0;
 					int fail = 0;
 					String URL = "";
+
+					for(int i=0;i<jParamArray.size();i++){
+						String  BACK_URL = "";
+
+						JSONObject jParamObject = (JSONObject)jParamArray.get(i);
+
+						String PAGE = (String) jParamObject.get("PAGE");
+						String PARAM = (String) jParamObject.get("PARAM");
+						String USER_TYPE = (String) jParamObject.get("USER_TYPE");
+						int SLOT_TYPE = Integer.parseInt((String) jParamObject.get("SLOT_TYPE"));
+						if(PAGE != null && !"".equals(PAGE)){
+							BACK_URL =  BACK_URL + "/" + PAGE;
+						}
+						if(PARAM != null && !"".equals(PARAM)){
+							BACK_URL =  BACK_URL + PARAM;
+						}
+
+						if(!"M".equals(member.getUSER_PERM()) && !Util.checkShutDownTime(USER_TYPE,SLOT_TYPE)){
+							jobj.put("alert", "마감시간을 확인해주세요.");
+							jobj.put("url",  BACK_URL);
+							return jobj.toString();
+						}
+					}
 
 					for(int i=0;i<jParamArray.size();i++){
 						JSONObject jParamObject = (JSONObject)jParamArray.get(i);
@@ -840,10 +945,18 @@ public class SlotController {
 
 			if(USER_TYPE.contains("NS")){
 				String TYPE_NAME = Request.getParameter("NS_TYPE_NAME_IN");
-				int SLOT_TYPE_IDX = DBConnector.InsertNaverShoppingSlotType(TYPE_NAME, "Y", member.getUSER_IDX());
+				String SLOT_STTM_H = Request.getParameter("NS_SLOT_STTM_H_IN");
+				String SLOT_STTM_M = Request.getParameter("NS_SLOT_STTM_M_IN");
+				String SLOT_ENTM_H = Request.getParameter("NS_SLOT_ENTM_H_IN");
+				String SLOT_ENTM_M = Request.getParameter("NS_SLOT_ENTM_M_IN");
+				int SLOT_TYPE_IDX = DBConnector.InsertNaverShoppingSlotType(TYPE_NAME, SLOT_STTM_H+SLOT_STTM_M, SLOT_ENTM_H+SLOT_ENTM_M, "Y", member.getUSER_IDX());
 			}else if(USER_TYPE.contains("NP")){
 				String TYPE_NAME = Request.getParameter("NP_TYPE_NAME_IN");
-				int SLOT_TYPE_IDX = DBConnector.InsertNaverPlaceSlotType(TYPE_NAME, "Y", member.getUSER_IDX());
+				String SLOT_STTM_H = Request.getParameter("NP_SLOT_STTM_H_IN");
+				String SLOT_STTM_M = Request.getParameter("NP_SLOT_STTM_M_IN");
+				String SLOT_ENTM_H = Request.getParameter("NP_SLOT_ENTM_H_IN");
+				String SLOT_ENTM_M = Request.getParameter("NP_SLOT_ENTM_M_IN");
+				int SLOT_TYPE_IDX = DBConnector.InsertNaverPlaceSlotType(TYPE_NAME, SLOT_STTM_H+SLOT_STTM_M, SLOT_ENTM_H+SLOT_ENTM_M, "Y", member.getUSER_IDX());
 			}
 			return "redirect:/slot-type-manage";
 		}
@@ -864,13 +977,21 @@ public class SlotController {
 				NaverShoppingSlotType st = DBConnector.getNaverShoppingSlotType(SLOT_TYPE_IDX,"Y").get(0);
 				if(st != null){
 					String TYPE_NAME = Request.getParameter("NS_TYPE_NAME_UP");
-					DBConnector.UpdateNaverShoppingSlotType(SLOT_TYPE_IDX, "TYPE_NAME", TYPE_NAME, member.getUSER_IDX());
+					String SLOT_STTM_H = Request.getParameter("NS_SLOT_STTM_H_UP");
+					String SLOT_STTM_M = Request.getParameter("NS_SLOT_STTM_M_UP");
+					String SLOT_ENTM_H = Request.getParameter("NS_SLOT_ENTM_H_UP");
+					String SLOT_ENTM_M = Request.getParameter("NS_SLOT_ENTM_M_UP");
+					DBConnector.UpdateNaverShoppingSlotType(SLOT_TYPE_IDX, TYPE_NAME, SLOT_STTM_H+SLOT_STTM_M, SLOT_ENTM_H+SLOT_ENTM_M, member.getUSER_IDX());
 				}
 			}else if(USER_TYPE.contains("NP")){
 				NaverPlaceSlotType st = DBConnector.getNaverPlaceSlotType(SLOT_TYPE_IDX,"Y").get(0);
 				if(st != null){
 					String TYPE_NAME = Request.getParameter("NP_TYPE_NAME_UP");
-					DBConnector.UpdateNaverPlaceSlotType(SLOT_TYPE_IDX, "TYPE_NAME", TYPE_NAME, member.getUSER_IDX());
+					String SLOT_STTM_H = Request.getParameter("NP_SLOT_STTM_H_UP");
+					String SLOT_STTM_M = Request.getParameter("NP_SLOT_STTM_M_UP");
+					String SLOT_ENTM_H = Request.getParameter("NP_SLOT_ENTM_H_UP");
+					String SLOT_ENTM_M = Request.getParameter("NP_SLOT_ENTM_M_UP");
+					DBConnector.UpdateNaverPlaceSlotType(SLOT_TYPE_IDX, TYPE_NAME, SLOT_STTM_H+SLOT_STTM_M, SLOT_ENTM_H+SLOT_ENTM_M, member.getUSER_IDX());
 				}
 			}
 			return "redirect:/slot-type-manage";
